@@ -1,0 +1,88 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin: 20px 0;
+  }
+  
+  .container {
+    text-align: center;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 320px;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  input[type="text"], input[type="number"] {
+    width: 200px;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 16px;
+    letter-spacing: 2px;
+  }
+  
+  button {
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+  
+  .number-row {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+  }
+
+  
+  #historyContainer {
+    margin-top: 20px;
+    text-align: left;
+  }
+  
+  #historyList {
+    list-style: none;
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    border-top: 1px solid #ccc;
+  }
+  
+  #historyList li {
+    font-size: 20px;
+    margin: 5px 0;
+    letter-spacing: 5px;
+  }
+
+  
+  .number-cell {
+    display: inline-block;
+    width: 30px; /* Ширина ячейки */
+    height: 30px; /* Высота ячейки */
+    text-align: center;
+    line-height: 30px; /* Центрирование текста по вертикали */
+    border: 1px solid #000; /* Граница ячейки */
+    margin-right: 5px; /* Пробел между ячейками */
+
+  }
+
+  .correct {
+    background-color: #28a745; /* Зеленый цвет для правильных позиций */
+    color: white;
+}
+
+.yellow {
+    background-color: #ffc107; /* Желтый цвет для неправильных позиций */
+    color: black;
+}

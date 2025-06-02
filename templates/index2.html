@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Numbly vs Computer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index2.css') }}" />
+</head>
+<body>
+    <div class="container">
+        <h1>Numbly: Вы против Компьютера</h1>
+        <label for="lengthInput">Выберите длину числа (4-7):</label>
+        <input type="number" id="lengthInput" min="4" max="7" value="4" />
+        <button id="start">Начать игру</button>
+
+        <div id="gameArea" class="hidden">
+            <div class="split-screen">
+                <div class="left-panel">
+                    <h2>Компьютер пытается угадать ваше число:</h2>
+                    <div id="computerGuessDisplay" class="number-row"></div>
+                    
+                </div>
+                <div class="right-panel">
+                    <h2>Ваше число:</h2>
+                    <input type="text" id="userNumberInput" maxlength="7" placeholder="Введите ваше число" />
+                    <button id="submitUser Number">Загадать число</button>
+
+                    <h2>Попытка угадать число компьютера:</h2>
+                    <input type="text" id="guessInput" maxlength="7" placeholder="Введите число для угадывания" />
+                    <button id="submitGuess">Угадать</button>
+
+                    <div id="guessDisplay" class="number-row"></div>
+
+                    <div id="historyContainer"  >
+                        <h2>История ходов:</h2>
+                        <div id="historyList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/index2.js') }}"></script>
+</body>
+</html>
+
+
