@@ -494,7 +494,7 @@ def game_wordly():
         is_creator = False
 
     game = wordly_games[room]
-    player_count = len(game.players) + 1  # +1 потому что игрок еще не добавлен
+    player_count = len(game.players)  # Убрали +1
 
     return render_template('game_wordly.html', 
                          room=room, 
@@ -526,28 +526,6 @@ def handle_wordly_join(data):
             'players': len(game.players),  # Используем актуальное количество
             'words_submitted': len(game.words)
         }, room=room)
-
-@app.route('/game_wordly')
-def game_wordly():
-    room = request.args.get('room', '').upper()
-    if not room:
-        return redirect(url_for('room_setup2'))
-
-    session_id = session['session_id']
-
-    if room not in wordly_games:
-        wordly_games[room] = WordlyGame()
-        is_creator = True
-    else:
-        is_creator = False
-
-    game = wordly_games[room]
-    player_count = len(game.players)  # Убрали +1
-
-    return render_template('game_wordly.html', 
-                         room=room, 
-                         player_count=player_count,
-                         is_creator=is_creator)
 
 @socketio.on('wordly_make_guess')
 def handle_wordly_make_guess(data):
