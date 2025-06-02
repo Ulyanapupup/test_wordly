@@ -47,7 +47,7 @@ submitWordBtn.addEventListener('click', () => {
     document.getElementById('wordSubmission').style.display = 'none';
     myWordDisplay.textContent = word;
     gameInfo.classList.remove('hidden');
-    gameStatus.textContent = 'Waiting for opponent...';
+    gameStatus.textContent = 'Ожидайте соперника...';
   }
 });
 
@@ -70,7 +70,7 @@ submitEvaluationBtn.addEventListener('click', () => {
   });
   evaluationSection.classList.add('hidden');
   guessSection.classList.remove('hidden');
-  gameStatus.textContent = 'Waiting for opponent...';
+  gameStatus.textContent = 'Ожидайте соперника...';
 });
 
 function createLetterElement(letter, index) {
@@ -110,12 +110,12 @@ function addGuessToHistory(guess, result) {
   guessElement.className = 'guess';
   
   if (result === 'pending') {
-    guessElement.textContent = `Your guess: ${guess} (waiting for evaluation)`;
+    guessElement.textContent = `Ваша догадка: ${guess} (ожидайте оценки)`;
     guessElement.style.color = '#999';
   } else {
     const resultStr = result.map((color, index) => 
-      `${guess[index]}: ${color || 'none'}`).join(', ');
-    guessElement.textContent = `Your guess: ${guess} - ${resultStr}`;
+      `${guess[index]}: ${color === 'green' ? 'зеленый' : color === 'yellow' ? 'желтый' : 'серый'}`).join(', ');
+    guessElement.textContent = `Ваша догадка: ${guess} - ${resultStr}`;
   }
   
   guessHistory.appendChild(guessElement);
@@ -127,7 +127,7 @@ socket.on('wordly_room_created', (data) => {
   playerId = socket.id;
   lobby.classList.add('hidden');
   game.classList.remove('hidden');
-  gameStatus.textContent = `Room created. Share this ID with your opponent: ${roomId}`;
+  gameStatus.textContent = `Комната создана. Поделитесь кодом со своим другом: ${roomId}`;
 });
 
 socket.on('wordly_room_joined', (data) => {
@@ -135,16 +135,16 @@ socket.on('wordly_room_joined', (data) => {
   playerId = socket.id;
   lobby.classList.add('hidden');
   game.classList.remove('hidden');
-  gameStatus.textContent = 'Room joined. Submit your secret word.';
+  gameStatus.textContent = 'Вы присоединились к комнате. Введите ваше слово';
 });
 
 socket.on('wordly_start_game', () => {
-  gameStatus.textContent = 'Game started! Make your guess.';
+  gameStatus.textContent = 'Игра началась. Напишите вашу догадку';
   guessSection.classList.remove('hidden');
 });
 
 socket.on('wordly_opponent_guess', (data) => {
-  gameStatus.textContent = 'Evaluate opponent\'s guess.';
+  gameStatus.textContent = 'Оцените догадку соперника';
   guessSection.classList.add('hidden');
   evaluationSection.classList.remove('hidden');
   setupEvaluation(data.guess);
@@ -152,11 +152,11 @@ socket.on('wordly_opponent_guess', (data) => {
 
 socket.on('wordly_guess_evaluated', (data) => {
   addGuessToHistory(data.guess, data.evaluation);
-  gameStatus.textContent = 'Your turn to guess.';
+  gameStatus.textContent = 'Ваш ход угадывать';
 });
 
 socket.on('wordly_game_over', (data) => {
-  const winnerText = data.winner === playerId ? 'You won!' : 'You lost.';
+  const winnerText = data.winner === playerId ? 'Вы победили!' : 'Вы проиграли';
   gameStatus.textContent = `${winnerText}`;
   guessSection.classList.add('hidden');
   evaluationSection.classList.add('hidden');
@@ -168,7 +168,7 @@ socket.on('wordly_game_over', (data) => {
 });
 
 socket.on('wordly_player_disconnected', () => {
-  gameStatus.textContent = 'Opponent disconnected. Game over.';
+  gameStatus.textContent = 'Соперник отключился. Игра окончена';
   guessSection.classList.add('hidden');
   evaluationSection.classList.add('hidden');
 });
@@ -198,5 +198,5 @@ socket.on('wordly_update_words', (words) => {
 });
 
 socket.on('wordly_error', (data) => {
-  gameStatus.textContent = `Error: ${data.message}`;
+  gameStatus.textContent = `Ошибка: ${data.message}`;
 });
