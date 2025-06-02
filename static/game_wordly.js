@@ -66,6 +66,11 @@ socket.on('wordly_player_left', () => {
   window.location.href = '/room_setup2';
 });
 
+socket.on('error', (data) => {
+  alert(data.message);
+  window.location.href = '/room_setup2';
+});
+
 window.addEventListener('beforeunload', () => {
   socket.emit('wordly_disconnect', { 
     room: roomCode, 

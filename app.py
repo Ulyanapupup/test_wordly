@@ -511,36 +511,43 @@ def handle_wordly_join(data):
     
     game = wordly_games[room]
     
-    # Проверяем, можно ли добавить игрока
-    if len(game.connected_players) >= 2 and session_id not in game.connected_players:
-        emit('error', {'message': 'Комната заполнена'})
+    # Проверяем, можно ли добавить игрока (максимум 2)
+    if len(game.players) >= 2 and session_id not in game.players:
+        emit('error', {'message': 'Комната заполнена. Максимум 2 игрока.'})
         return
     
-    if game.add_player(session_id):
+    # Добавляем игрока, если его ещё нет
+    if session_id not in game.players:
+        game.players.add(session_id)
         connected = game.connect_player(session_id)
         join_room(room)
         
         emit('wordly_update', {
-            'players': connected,
+            'players': len(game.players),  # Используем актуальное количество
             'words_submitted': len(game.words)
         }, room=room)
 
-@socketio.on('wordly_submit_word')
-def handle_wordly_submit_word(data):
-    room = data['room']
-    session_id = data['session_id']
-    word = data['word']
-    
-    game = wordly_games.get(room)
-    if game:
-        game.submit_word(session_id, word)
-        emit('wordly_word_submitted', {'player': session_id}, room=room)
-        
-        if len(game.words) == 2:
-            # Добавляем данные о текущем ходе
-            emit('wordly_game_started', {
-                'current_turn': list(game.players.keys())[game.current_turn]
-            }, room=room)
+@app.route('/game_wordly')
+def game_wordly():
+    room = request.args.get('room', '').upper()
+    if not room:
+        return redirect(url_for('room_setup2'))
+
+    session_id = session['session_id']
+
+    if room not in wordly_games:
+        wordly_games[room] = WordlyGame()
+        is_creator = True
+    else:
+        is_creator = False
+
+    game = wordly_games[room]
+    player_count = len(game.players)  # Убрали +1
+
+    return render_template('game_wordly.html', 
+                         room=room, 
+                         player_count=player_count,
+                         is_creator=is_creator)
 
 @socketio.on('wordly_make_guess')
 def handle_wordly_make_guess(data):
