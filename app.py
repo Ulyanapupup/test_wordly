@@ -511,10 +511,11 @@ def handle_wordly_join(data):
     
     game = wordly_games[room]
     game.add_player(session_id)
+    connected = game.connect_player(session_id)
     join_room(room)
     
     emit('wordly_update', {
-        'players': len(game.players),  # Убрали +1
+        'players': connected,  # Только подключенные игроки
         'words_submitted': len(game.words)
     }, room=room)
 
@@ -564,6 +565,15 @@ def handle_wordly_submit_evaluation(data):
         result = game.evaluate_guess(evaluation)
         if result:
             emit('wordly_turn_changed', result, room=room)
+            
+@socketio.on('wordly_check_word')
+def handle_wordly_check_word(data):
+    room = data['room']
+    session_id = data['session_id']
+    
+    if room in wordly_games:
+        game = wordly_games[room]
+        emit('wordly_check_word', session_id in game.words)
 
 @socketio.on('wordly_disconnect')
 def handle_wordly_disconnect(data):
@@ -571,9 +581,18 @@ def handle_wordly_disconnect(data):
     session_id = data['session_id']
     
     if room in wordly_games:
-        emit('wordly_player_left', {'player': session_id}, room=room)
-        if room in wordly_games:
+        game = wordly_games[room]
+        remaining = game.disconnect_player(session_id)
+        
+        emit('wordly_update', {
+            'players': remaining,
+            'words_submitted': len(game.words)
+        }, room=room)
+        
+        if remaining == 0:
             del wordly_games[room]
+        else:
+            emit('wordly_player_left', {'player': session_id}, room=room)
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))

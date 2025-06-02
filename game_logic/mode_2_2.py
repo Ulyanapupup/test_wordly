@@ -1,15 +1,25 @@
 # game_logic/mode_2_2.py
 class WordlyGame:
     def __init__(self):
-        self.players = {}
+        self.players = set()  # Используем set вместо dict для избежания дублирования
         self.words = {}
         self.guesses = []
         self.current_turn = 0
         self.game_over = False
+        self.connected_players = set()  # Отдельно храним подключенных игроков
 
     def add_player(self, player_id):
         if player_id not in self.players:
-            self.players[player_id] = len(self.players)
+            self.players.add(player_id)
+            
+    def connect_player(self, player_id):
+        self.connected_players.add(player_id)
+        return len(self.connected_players)
+        
+    def disconnect_player(self, player_id):
+        if player_id in self.connected_players:
+            self.connected_players.remove(player_id)
+        return len(self.connected_players)
 
     def submit_word(self, player_id, word):
         self.words[player_id] = word.lower()

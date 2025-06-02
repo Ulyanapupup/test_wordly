@@ -29,17 +29,29 @@ submitWordBtn.addEventListener('click', () => {
 });
 
 socket.on('wordly_update', (data) => {
-  document.getElementById('playerCount').innerText = data.players;
+  const playerCount = data.players;
+  document.getElementById('playerCount').innerText = playerCount;
   
-  if (data.players < 2) {
+  if (playerCount < 2) {
     statusElement.textContent = 'Ожидаем второго игрока...';
     document.getElementById('waitingForPlayers').style.display = 'block';
     wordSubmission.style.display = 'none';
-  } else if (data.words_submitted < 2) {
-    // Показываем форму только если подключено 2 игрока, но слова ещё не отправлены
-    statusElement.textContent = 'Введите ваше слово (5 букв)';
-    wordSubmission.style.display = 'block';
-    document.getElementById('waitingForPlayers').style.display = 'none';
+  } else {
+    // Проверяем, отправил ли текущий игрок слово
+    socket.emit('wordly_check_word', { 
+      room: roomCode, 
+      session_id: sessionId 
+    }, (hasSubmitted) => {
+      if (!hasSubmitted) {
+        statusElement.textContent = 'Введите ваше слово (5 букв)';
+        wordSubmission.style.display = 'block';
+        document.getElementById('waitingForPlayers').style.display = 'none';
+      } else {
+        statusElement.textContent = 'Ожидаем слово от соперника...';
+        wordSubmission.style.display = 'none';
+        document.getElementById('waitingForPlayers').style.display = 'block';
+      }
+    });
   }
 });
 
