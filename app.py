@@ -479,6 +479,28 @@ def game_mode_2_2():
     room = request.args.get('room')
     return render_template('game_mode_2_2.html', room=room)
     
+@app.route('/game_wordly')
+def game_wordly():
+    room = request.args.get('room', '').upper()
+    if not room:
+        return redirect(url_for('room_setup2'))
+
+    session_id = session['session_id']
+
+    if room not in wordly_games:
+        wordly_games[room] = WordlyGame()
+        is_creator = True
+    else:
+        is_creator = False
+
+    game = wordly_games[room]
+    player_count = len(game.players) + 1  # +1 потому что игрок еще не добавлен
+
+    return render_template('game_wordly.html', 
+                         room=room, 
+                         player_count=player_count,
+                         is_creator=is_creator)
+    
 @socketio.on('wordly_join')
 def handle_wordly_join(data):
     room = data['room']

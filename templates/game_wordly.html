@@ -1,0 +1,27 @@
+<!-- templates/game_wordly.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Wordly - Комната {{ room }}</title>
+</head>
+<body>
+  <h1>Wordly - Код комнаты: {{ room }}</h1>
+  <p>Подключено игроков: <span id="playerCount">{{ player_count }}</span></p>
+  <p id="status"></p>
+
+  <div id="waitingForPlayers" style="display: none;">
+    Ожидаем подключения второго игрока...
+  </div>
+  
+  <button onclick="window.location.href='/room_setup2'">Выйти из комнаты</button>
+
+  <script>
+    window.roomCode = "{{ room }}";
+    window.isCreator = {{ 'true' if is_creator else 'false' }};
+    window.sessionId = "{{ session['session_id'] }}";
+  </script>
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+  <script src="/static/game_wordly.js"></script>
+</body>
+</html>
