@@ -1,4 +1,4 @@
-const socket = io.connect();
+const socket = io();
 
 // UI Elements
 const lobby = document.getElementById('lobby');
