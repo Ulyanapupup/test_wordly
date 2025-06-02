@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Комната {{ room }} (Режим с другом)</title>
+</head>
+<body>
+  <h1>Код комнаты: {{ room }}</h1>
+  <p>Подключено игроков: <span id="playerCount">{{ player_count }}</span></p>
+  <p id="status"></p>
+
+  <div id="roleSelection">
+    <h2>Выберите роль:</h2>
+    <button onclick="selectRole('guesser')">Угадывающий</button>
+    <button onclick="selectRole('creator')">Загадывающий</button>
+  </div>
+
+  <div id="waitingMessage" style="display: none;">
+    <p>Ожидаем выбора роли другим игроком...</p>
+  </div>
+
+  <div id="startGameDiv" style="display: none;">
+    <button onclick="startGame()">Начать игру</button>
+  </div>
+
+  <button onclick="leaveGame()">Выйти из комнаты</button>
+
+  <script>
+    window.roomCode = "{{ room }}";
+    window.sessionId = "{{ session['session_id'] }}";
+  </script>
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+  <script src="/static/game2.js"></script>
+</body>
+</html>

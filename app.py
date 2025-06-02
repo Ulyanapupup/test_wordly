@@ -13,7 +13,6 @@ from game_logic import mode_1_1
 from game_logic.mode_1_2 import Game  # импорт класса Game из mode_1_2
 
 from game_logic.mode_2_1 import Game2_1
-from game_logic.mode_2_2 import WordlyGame
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = 'some_secret_key'  # для сессий
@@ -27,8 +26,6 @@ game_sessions = {}  # {'ROOM123': Game2_1()}
 
 # Хранилище комнат для сетевой игры 2.1
 rooms = {}
-
-wordly_games = {}
 
 session_to_sid = {}  # сопоставление session_id -> socket.id
 
@@ -62,6 +59,10 @@ def index2_page():
 @app.route('/room_setup')
 def room_setup():
     return render_template('room_setup.html')
+    
+@app.route('/room_setup2')
+def room_setup2():
+    return render_template('room_setup2.html')
 
 @app.route('/game/<mode>')
 def game_mode(mode):
@@ -465,133 +466,41 @@ def handle_reply_logic(data):
             'correct': result['correct'],
             'value': result['guess']
         }, to=guesser_sid)
-
-
-
-
-
-@app.route('/room_setup2')
-def room_setup2():
-    return render_template('room_setup2.html')
-    
-@app.route('/game_mode_2_2')
-def game_mode_2_2():
-    room = request.args.get('room')
-    return render_template('game_mode_2_2.html', room=room)
-    
-@app.route('/game_wordly')
-def game_wordly():
+        
+        
+        
+        
+        
+        
+@app.route('/game2')
+def game2():
     room = request.args.get('room', '').upper()
     if not room:
         return redirect(url_for('room_setup2'))
 
     session_id = session['session_id']
 
-    if room not in wordly_games:
-        wordly_games[room] = WordlyGame()
-        is_creator = True
-    else:
-        is_creator = False
+    if room not in rooms:
+        # Создаём новую комнату, первый игрок - создатель
+        rooms[room] = {
+            'players': set(),
+            'roles': {},
+            'creator': session_id,
+            'mode': None
+        }
+    # Добавляем игрока в комнату, если его там нет
+    rooms[room]['players'].add(session_id)
 
-    game = wordly_games[room]
-    player_count = len(game.players)  # Убрали +1
+    player_count = len(rooms[room]['players'])
+    is_creator = (session_id == rooms[room]['creator'])
 
-    return render_template('game_wordly.html', 
-                         room=room, 
-                         player_count=player_count,
-                         is_creator=is_creator)
-    
-@socketio.on('wordly_join')
-def handle_wordly_join(data):
-    room = data['room']
-    session_id = data['session_id']
-    
-    if room not in wordly_games:
-        wordly_games[room] = WordlyGame()
-    
-    game = wordly_games[room]
-    
-    # Проверяем, можно ли добавить игрока (максимум 2)
-    if len(game.players) >= 2 and session_id not in game.players:
-        emit('error', {'message': 'Комната заполнена. Максимум 2 игрока.'})
-        return
-    
-    # Добавляем игрока, если его ещё нет
-    if session_id not in game.players:
-        game.players.add(session_id)
-        connected = game.connect_player(session_id)
-        join_room(room)
-        
-        emit('wordly_update', {
-            'players': len(game.players),  # Используем актуальное количество
-            'words_submitted': len(game.words)
-        }, room=room)
+    return render_template('game2.html', room=room, player_count=player_count, is_creator=is_creator)
 
-@socketio.on('wordly_make_guess')
-def handle_wordly_make_guess(data):
-    room = data['room']
-    session_id = data['session_id']
-    guess = data['guess']
-    
-    game = wordly_games.get(room)
-    if game and not game.game_over:
-        result = game.make_guess(session_id, guess)
-        
-        if 'winner' in result:
-            emit('wordly_game_over', result, room=room)
-        else:
-            emit('wordly_guess_made', {
-                'guess': result['guess'],
-                'player': session_id
-            }, to=result['opponent_id'])
+@app.route('/game_mode_2_2')
+def game_mode_2_2():
+    room = request.args.get('room')
+    return render_template('game_mode_2_2.html', room=room)
 
-@socketio.on('wordly_submit_evaluation')
-def handle_wordly_submit_evaluation(data):
-    room = data['room']
-    session_id = data['session_id']
-    evaluation = data['evaluation']
-    
-    game = wordly_games.get(room)
-    if game and not game.game_over:
-        result = game.evaluate_guess(evaluation)
-        if result:
-            emit('wordly_turn_changed', result, room=room)
-            
-@socketio.on('wordly_check_word')
-def handle_wordly_check_word(data):
-    room = data['room']
-    session_id = data['session_id']
-    
-    if room in wordly_games:
-        game = wordly_games[room]
-        emit('wordly_check_word', session_id in game.words)
-
-@socketio.on('wordly_disconnect')
-def handle_wordly_disconnect(data):
-    room = data['room']
-    session_id = data['session_id']
-    
-    if room in wordly_games:
-        game = wordly_games[room]
-        remaining = game.disconnect_player(session_id)
-        
-        # Удаляем игрока из players, если он там есть
-        if session_id in game.players:
-            game.players.remove(session_id)
-        
-        # Удаляем слово игрока, если оно есть
-        if session_id in game.words:
-            del game.words[session_id]
-        
-        emit('wordly_update', {
-            'players': remaining,
-            'words_submitted': len(game.words)
-        }, room=room)
-        
-        if remaining == 0:
-            del wordly_games[room]
-        else:
-            emit('wordly_player_left', {'player': session_id}, room=room)
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
