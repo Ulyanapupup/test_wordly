@@ -514,7 +514,7 @@ def handle_wordly_join(data):
     join_room(room)
     
     emit('wordly_update', {
-        'players': len(game.players),
+        'players': len(game.players),  # Убрали +1
         'words_submitted': len(game.words)
     }, room=room)
 
@@ -530,8 +530,10 @@ def handle_wordly_submit_word(data):
         emit('wordly_word_submitted', {'player': session_id}, room=room)
         
         if len(game.words) == 2:
-            # Оба игрока отправили слова - начинаем игру
-            emit('wordly_game_started', room=room)
+            # Добавляем данные о текущем ходе
+            emit('wordly_game_started', {
+                'current_turn': list(game.players.keys())[game.current_turn]
+            }, room=room)
 
 @socketio.on('wordly_make_guess')
 def handle_wordly_make_guess(data):

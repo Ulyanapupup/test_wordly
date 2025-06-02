@@ -197,12 +197,12 @@
     });
     
     socket.on('wordly_game_started', (data) => {
-      const isMyTurn = data.current_turn === sessionId;
-      gameStatus.textContent = isMyTurn ? 'Your turn to guess!' : 'Opponent\'s turn...';
-      if (isMyTurn) {
-        guessSection.classList.remove('hidden');
-      }
-    });
+	  const isMyTurn = data.current_turn === sessionId;
+	  gameStatus.textContent = isMyTurn ? 'Your turn to guess!' : 'Opponent\'s turn...';
+	  if (isMyTurn) {
+		guessSection.classList.remove('hidden');
+	  }
+	});
     
     socket.on('wordly_guess_made', (data) => {
       if (data.player !== sessionId) {

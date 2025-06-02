@@ -35,8 +35,8 @@ socket.on('wordly_update', (data) => {
     statusElement.textContent = 'Ожидаем второго игрока...';
     document.getElementById('waitingForPlayers').style.display = 'block';
     wordSubmission.style.display = 'none';
-  } else {
-    // Когда оба игрока подключены, показываем форму для ввода слова
+  } else if (data.words_submitted < 2) {
+    // Показываем форму только если подключено 2 игрока, но слова ещё не отправлены
     statusElement.textContent = 'Введите ваше слово (5 букв)';
     wordSubmission.style.display = 'block';
     document.getElementById('waitingForPlayers').style.display = 'none';
