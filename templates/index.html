@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Numbly Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}" />
+</head>
+<body>
+    <div class="container">
+        <h1>Numbly</h1>
+        <label for="lengthInput">Выберите длину числа (4-7):</label>
+        <input type="number" id="lengthInput" min="4" max="7" value="4" />
+        <button id="start">Начать игру</button>
+
+        <div id="gameArea" class="hidden">
+            <p>Введите ваше предположение:</p>
+            <input type="text" id="guessInput" maxlength="7" placeholder="Введите число" />
+            <button id="submitGuess">Угадать</button>
+
+            <div id="guessDisplay" class="number-row"></div>
+
+            <div id="historyContainer">
+                <h2>История ходов:</h2>
+                <ul id="historyList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+</body>
+</html>
