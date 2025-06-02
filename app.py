@@ -59,10 +59,6 @@ def index2_page():
 @app.route('/room_setup')
 def room_setup():
     return render_template('room_setup.html')
-    
-@app.route('/room_setup2')
-def room_setup2():
-    return render_template('room_setup2.html')
 
 @app.route('/game/<mode>')
 def game_mode(mode):
@@ -469,37 +465,99 @@ def handle_reply_logic(data):
         
         
         
+
+# В app.py добавим новый обработчик сокетов для Wordly
+@socketio.on('create_wordly_room')
+def handle_create_wordly_room():
+    room_id = generate_wordly_room_id()
+    rooms[room_id] = {
+        'players': [request.sid],
+        'words': {},
+        'guesses': [],
+        'currentTurn': 0,
+        'gameOver': False,
+        'type': 'wordly'  # Добавляем тип игры
+    }
+    join_room(room_id)
+    emit('wordly_room_created', {'roomId': room_id})
+
+@socketio.on('join_wordly_room')
+def handle_join_wordly_room(data):
+    room_id = data['roomId']
+    room = rooms.get(room_id)
+    
+    if room and len(room['players']) == 1 and room.get('type') == 'wordly':
+        room['players'].append(request.sid)
+        join_room(room_id)
+        emit('wordly_room_joined', {'roomId': room_id}, room=room_id)
+    else:
+        emit('wordly_error', {'message': 'Room is full or does not exist.'})
+
+@socketio.on('submit_wordly_word')
+def handle_submit_wordly_word(data):
+    room_id = data['roomId']
+    word = data['word']
+    room = rooms.get(room_id)
+    
+    if room and room.get('type') == 'wordly':
+        room['words'][request.sid] = word.lower()
+        emit('wordly_update_words', room['words'], room=room_id)
         
+        if len(room['words']) == 2:
+            emit('wordly_start_game', room=room_id)
+
+@socketio.on('make_wordly_guess')
+def handle_make_wordly_guess(data):
+    room_id = data['roomId']
+    guess = data['guess']
+    room = rooms.get(room_id)
+    
+    if room and not room['gameOver'] and room.get('type') == 'wordly':
+        opponent_id = next(id for id in room['players'] if id != request.sid)
+        opponent_word = room['words'].get(opponent_id, '')
+        guessed_word = guess.lower()
         
+        if guessed_word == opponent_word:
+            room['gameOver'] = True
+            emit('wordly_game_over', {
+                'winner': request.sid,
+                'words': room['words']
+            }, room=room_id)
+            return
         
-@app.route('/game2')
-def game2():
-    room = request.args.get('room', '').upper()
-    if not room:
-        return redirect(url_for('room_setup2'))
+        emit('wordly_opponent_guess', {'guess': guessed_word}, to=opponent_id)
+        emit('wordly_guess_sent')
 
-    session_id = session['session_id']
+@socketio.on('submit_wordly_evaluation')
+def handle_submit_wordly_evaluation(data):
+    room_id = data['roomId']
+    evaluation = data['evaluation']
+    room = rooms.get(room_id)
+    
+    if room and not room['gameOver'] and room.get('type') == 'wordly':
+        last_guess = room['guesses'][-1] if room['guesses'] else None
+        if last_guess:
+            last_guess['result'] = evaluation
+            
+            emit('wordly_guess_evaluated', {
+                'guess': last_guess['guess'],
+                'evaluation': evaluation
+            }, room=room_id)
+            
+            room['currentTurn'] = (room['currentTurn'] + 1) % 2
+            emit('wordly_next_turn', {'playerId': room['players'][room['currentTurn']]}, room=room_id)
 
-    if room not in rooms:
-        # Создаём новую комнату, первый игрок - создатель
-        rooms[room] = {
-            'players': set(),
-            'roles': {},
-            'creator': session_id,
-            'mode': None
-        }
-    # Добавляем игрока в комнату, если его там нет
-    rooms[room]['players'].add(session_id)
+def generate_wordly_room_id():
+    import random
+    import string
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
-    player_count = len(rooms[room]['players'])
-    is_creator = (session_id == rooms[room]['creator'])
-
-    return render_template('game2.html', room=room, player_count=player_count, is_creator=is_creator)
-
-@app.route('/game_mode_2_2')
-def game_mode_2_2():
-    room = request.args.get('room')
-    return render_template('game_mode_2_2.html', room=room)
+# Добавим маршрут для игры Wordly
+@app.route('/game/wordly')
+def game_wordly():
+    return render_template('game_mode_wordly.html')
+    
+    
 
 
 if __name__ == '__main__':
