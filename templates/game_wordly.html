@@ -3,11 +3,31 @@
 <html>
 <head>
   <title>Wordly - Комната {{ room }}</title>
+  <style>
+    /* Добавим стили для формы ввода слова */
+    #wordSubmission {
+      margin: 20px 0;
+    }
+    #secretWord {
+      padding: 8px;
+      font-size: 16px;
+      width: 200px;
+    }
+    #submitWord {
+      padding: 8px 15px;
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
   <h1>Wordly - Код комнаты: {{ room }}</h1>
   <p>Подключено игроков: <span id="playerCount">{{ player_count }}</span></p>
-  <p id="status"></p>
+  <p id="status">Ожидаем второго игрока...</p>
+
+  <div id="wordSubmission" style="display: none;">
+    <input type="text" id="secretWord" maxlength="5" placeholder="Введите ваше слово (5 букв)" />
+    <button id="submitWord">Отправить слово</button>
+  </div>
 
   <div id="waitingForPlayers" style="display: none;">
     Ожидаем подключения второго игрока...

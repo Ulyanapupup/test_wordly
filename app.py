@@ -526,13 +526,12 @@ def handle_wordly_submit_word(data):
     
     game = wordly_games.get(room)
     if game:
-        game_started = game.submit_word(session_id, word)
+        game.submit_word(session_id, word)
         emit('wordly_word_submitted', {'player': session_id}, room=room)
         
-        if game_started:
-            emit('wordly_game_started', {
-                'current_turn': list(game.players.keys())[game.current_turn]
-            }, room=room)
+        if len(game.words) == 2:
+            # Оба игрока отправили слова - начинаем игру
+            emit('wordly_game_started', room=room)
 
 @socketio.on('wordly_make_guess')
 def handle_wordly_make_guess(data):
