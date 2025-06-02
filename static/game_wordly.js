@@ -57,8 +57,7 @@ socket.on('wordly_update', (data) => {
   }
 });
 
-socket.on('wordly_game_started', () => {
-  // Перенаправляем в игровой режим
+socket.on('wordly_game_started', (data) => {
   window.location.href = `/game_mode_2_2?room=${roomCode}`;
 });
 

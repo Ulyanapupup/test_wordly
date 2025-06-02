@@ -524,10 +524,6 @@ def handle_wordly_join(data):
             'players': connected,
             'words_submitted': len(game.words)
         }, room=room)
-    
-socket.on('wordly_game_started', (data) => {
-  window.location.href = `/game_mode_2_2?room=${roomCode}`;
-});
 
 @socketio.on('wordly_submit_word')
 def handle_wordly_submit_word(data):
