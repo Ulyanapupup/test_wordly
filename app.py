@@ -510,14 +510,24 @@ def handle_wordly_join(data):
         wordly_games[room] = WordlyGame()
     
     game = wordly_games[room]
-    game.add_player(session_id)
-    connected = game.connect_player(session_id)
-    join_room(room)
     
-    emit('wordly_update', {
-        'players': connected,  # Только подключенные игроки
-        'words_submitted': len(game.words)
-    }, room=room)
+    # Проверяем, можно ли добавить игрока
+    if len(game.connected_players) >= 2 and session_id not in game.connected_players:
+        emit('error', {'message': 'Комната заполнена'})
+        return
+    
+    if game.add_player(session_id):
+        connected = game.connect_player(session_id)
+        join_room(room)
+        
+        emit('wordly_update', {
+            'players': connected,
+            'words_submitted': len(game.words)
+        }, room=room)
+    
+socket.on('wordly_game_started', (data) => {
+  window.location.href = `/game_mode_2_2?room=${roomCode}`;
+});
 
 @socketio.on('wordly_submit_word')
 def handle_wordly_submit_word(data):
@@ -583,6 +593,14 @@ def handle_wordly_disconnect(data):
     if room in wordly_games:
         game = wordly_games[room]
         remaining = game.disconnect_player(session_id)
+        
+        # Удаляем игрока из players, если он там есть
+        if session_id in game.players:
+            game.players.remove(session_id)
+        
+        # Удаляем слово игрока, если оно есть
+        if session_id in game.words:
+            del game.words[session_id]
         
         emit('wordly_update', {
             'players': remaining,

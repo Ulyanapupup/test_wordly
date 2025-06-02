@@ -31,6 +31,8 @@ submitWordBtn.addEventListener('click', () => {
 socket.on('wordly_update', (data) => {
   const playerCount = data.players;
   document.getElementById('playerCount').innerText = playerCount;
+  document.getElementById('statusMessage').textContent = 
+    `Ожидаем второго игрока... (${playerCount}/2)`;
   
   if (playerCount < 2) {
     statusElement.textContent = 'Ожидаем второго игрока...';
@@ -63,4 +65,11 @@ socket.on('wordly_game_started', () => {
 socket.on('wordly_player_left', () => {
   alert('Соперник покинул игру');
   window.location.href = '/room_setup2';
+});
+
+window.addEventListener('beforeunload', () => {
+  socket.emit('wordly_disconnect', { 
+    room: roomCode, 
+    session_id: sessionId 
+  });
 });

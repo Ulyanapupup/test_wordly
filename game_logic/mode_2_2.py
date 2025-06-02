@@ -9,14 +9,18 @@ class WordlyGame:
         self.connected_players = set()  # Отдельно храним подключенных игроков
 
     def add_player(self, player_id):
-        if player_id not in self.players:
+        """Добавляет игрока только если его нет в игре"""
+        if player_id not in self.players and len(self.players) < 2:
             self.players.add(player_id)
+            return True
+        return False
             
     def connect_player(self, player_id):
         self.connected_players.add(player_id)
         return len(self.connected_players)
         
     def disconnect_player(self, player_id):
+        """Удаляет игрока из подключенных"""
         if player_id in self.connected_players:
             self.connected_players.remove(player_id)
         return len(self.connected_players)
