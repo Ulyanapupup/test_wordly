@@ -173,6 +173,13 @@ socket.on('wordly_room_joined', (data) => {
 });
 
 socket.on('wordly_start_game', (data) => {
+  const resultsSection = document.getElementById('resultsSection');
+  resultsSection.classList.add('hidden');
+  guessHistory.parentElement.classList.remove('hidden');
+  gameInfo.classList.remove('hidden');
+  guessSection.classList.remove('hidden');
+  evaluationSection.classList.add('hidden');
+  
   if (data.firstPlayer === playerId) {
     gameStatus.textContent = 'Игра началась! Ваш ход';
     guessSection.classList.remove('hidden');
@@ -195,15 +202,36 @@ socket.on('wordly_opponent_guess', (data) => {
 });
 
 socket.on('wordly_game_over', (data) => {
-  const winnerText = data.winner === playerId ? 'You won!' : 'You lost.';
-  gameStatus.textContent = `${winnerText}`;
+  // Скрываем зону догадок, историю догадок и зону оценки
   guessSection.classList.add('hidden');
+  guessHistory.parentElement.classList.add('hidden');  // div с историей догадок
   evaluationSection.classList.add('hidden');
-  
-  // Показываем слова
-  myWordDisplay.textContent = data.words[playerId];
+  gameInfo.classList.add('hidden');
+
+  // Показываем итоговый блок
+  const resultsSection = document.getElementById('resultsSection');
+  resultsSection.classList.remove('hidden');
+
+  // Заполняем слова
+  const myWord = data.words[playerId];
   const opponentId = Object.keys(data.words).find(id => id !== playerId);
-  opponentWordDisplay.textContent = data.words[opponentId];
+  const opponentWord = data.words[opponentId];
+
+  document.getElementById('resultMyWord').textContent = myWord;
+  document.getElementById('resultOpponentWord').textContent = opponentWord;
+
+  // Надпись о победе/поражении внутри итогов
+  const resultStatus = document.getElementById('resultStatus');
+  if (data.winner === playerId) {
+    resultStatus.textContent = 'Поздравляем! Вы выиграли!';
+    resultStatus.style.color = 'green';
+  } else {
+    resultStatus.textContent = 'К сожалению, вы проиграли.';
+    resultStatus.style.color = 'red';
+  }
+
+  // Убираем общий gameStatus (чтобы не дублировалось)
+  gameStatus.textContent = '';
 });
 
 socket.on('wordly_player_disconnected', () => {

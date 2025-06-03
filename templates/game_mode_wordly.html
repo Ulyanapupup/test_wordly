@@ -121,7 +121,6 @@
         <div id="guessSection" class="hidden">
           <input type="text" id="guessInput" maxlength="5" placeholder="Введите свое предположение" />
           <button id="submitGuess">Отправить</button>
-          <div id="guessHistory"></div>
         </div>
 		
 		<div id="gameInfo" class="hidden">
@@ -147,6 +146,13 @@
           <div id="opponentGuess"></div>
           <button id="submitEvaluation">Отправить оценку</button>
         </div>
+		
+		<div id="resultsSection" class="hidden">
+		  <h2>Итоги</h2>
+		  <p>Ваше слово: <span id="resultMyWord"></span></p>
+		  <p>Слово соперника: <span id="resultOpponentWord"></span></p>
+		  <p id="resultStatus" style="font-weight:bold; font-size:1.2em;"></p>
+		</div>
       </div>
     </div>
     <div id="gameStatus"></div>
