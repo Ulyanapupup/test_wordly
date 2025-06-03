@@ -59,7 +59,7 @@
       margin-top: 10px;
     }
     .hidden {
-      display: none !important;
+      display: none;
     }
 	#gameInfo {
 	margin-top: 20px;
@@ -115,20 +115,18 @@
   
   <div id="game" class="hidden">
    <button id="leaveGame">Покинуть игру</button>
-   <p id="roomCodeDisplay" style="font-weight:bold; margin-top:10px;">Код комнаты: <span id="roomCode"></span></p>
     <div class="game-container">
-	 <div id="guessArea">
       <div class="game-section">
         <h2>Ваша зона для догадки</h2>
         <div id="guessSection" class="hidden">
           <input type="text" id="guessInput" maxlength="5" placeholder="Введите свое предположение" />
           <button id="submitGuess">Отправить</button>
         </div>
-	   </div>
 		
 		<div id="gameInfo" class="hidden">
 		  <h3>Информация</h3>
 		  <p>Ваше слово: <span id="myWord"></span></p>
+		  <p>Слово соперника: <span id="opponentWord"></span></p>
 		</div>
 
 		<div id="guessResults">
