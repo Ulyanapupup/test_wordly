@@ -106,22 +106,19 @@ function setupEvaluation(guess) {
 }
 
 function addGuessToHistory(guess, result) {
+  // Не отображать строку, если результат еще не готов
+  if (result === 'pending') return;
+
   const guessElement = document.createElement('div');
   guessElement.className = 'guess-row';
 
   for (let i = 0; i < 5; i++) {
     const letterBox = document.createElement('div');
     letterBox.className = 'letter';
-
     letterBox.textContent = guess[i];
 
-    if (result === 'pending') {
-      letterBox.style.backgroundColor = '#ddd'; // ожидание — нейтральный серый
-      letterBox.style.color = '#000';
-    } else {
-      const state = result[i];
-      letterBox.classList.add(state); // применяет классы .green, .yellow
-    }
+    const state = result[i]; // 'green', 'yellow', 'gray'
+    letterBox.classList.add(state);
 
     guessElement.appendChild(letterBox);
   }
