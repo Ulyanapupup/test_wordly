@@ -243,26 +243,30 @@
     }
 
     function ask() {
-      const q = document.getElementById('question').value;
-      if (!q.trim()) return;
-      appendToChat('Вы', q);
-      fetch('/ask', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          question: q, 
-          mode: "1.1",
-          secret_number: secretNumber,
-          min_range: minRange,
-          max_range: maxRange
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        appendToChat('Система', data.answer);
-      });
-      document.getElementById('question').value = '';
-    }
+		const q = document.getElementById('question').value;
+		if (!q.trim()) return;
+		appendToChat('Вы', q);
+		fetch('/ask', {
+			method: 'POST',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify({
+				question: q, 
+				mode: "1.1",
+				secret_number: secretNumber,
+				min_range: minRange,
+				max_range: maxRange
+			})
+		})
+		.then(res => res.json())
+		.then(data => {
+			appendToChat('Система', data.answer);
+		})
+		.catch(error => {
+			console.error('Error:', error);
+			appendToChat('Система', 'Произошла ошибка при обработке вопроса');
+		});
+		document.getElementById('question').value = '';
+	}
 
     function checkGuess() {
       const guess = parseInt(document.getElementById('guess').value);

@@ -1,6 +1,7 @@
 # game_logic/mode_1_1.py
 import json, re, string
 import os
+from flask import request  # Добавляем импорт request
 
 # Определяем абсолютный путь к json (от корня проекта)
 json_path = os.path.join('game_logic', 'questions_1_1.json')

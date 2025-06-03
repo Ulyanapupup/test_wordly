@@ -121,6 +121,7 @@ def ask():
     question = request.json.get("question", "")
     mode = request.json.get("mode", "1.1")
     if mode == "1.1":
+        # Передаем все необходимые параметры в process_question
         answer = mode_1_1.process_question(question)
     elif mode == "1.2":
         answer_yes = request.json.get("answer") == "да"
