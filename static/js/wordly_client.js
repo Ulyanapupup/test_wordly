@@ -205,13 +205,11 @@ socket.on('wordly_opponent_guess', (data) => {
 
 socket.on('wordly_game_over', (data) => {
   // Скрыть все игровые секции
-  document.querySelectorAll('.game-section').forEach(section => {
-    section.classList.add('hidden');
-  });
-  
-  guessHistory.parentElement.classList.add('hidden');  // скрыть историю догадок
+  document.getElementById('wordSubmission').style.display = 'none';
+  guessSection.classList.add('hidden');
   evaluationSection.classList.add('hidden');
   gameInfo.classList.add('hidden');
+  guessHistory.parentElement.classList.add('hidden');
 
   // Показать итоги
   const resultsSection = document.getElementById('resultsSection');
