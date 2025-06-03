@@ -81,18 +81,18 @@ socket.on('wordly_guess_evaluated', (data) => {
 });
 
 leaveInitialBtn.addEventListener('click', () => {
-  window.location.href = '/mode_selection'; // Просто перенаправляем на главную
+  window.location.href = '/'; // Просто перенаправляем на главную
 });
 
 leaveLobbyBtn.addEventListener('click', () => {
-  window.location.href = '/mode_selection';
+  window.location.href = '/';
 });
 
 leaveGameBtn.addEventListener('click', () => {
   if (roomId) {
     socket.emit('leave_wordly_game', { roomId });
   }
-  window.location.href = '/mode_selection';
+  window.location.href = '/';
 });
 
 submitEvaluationBtn.addEventListener('click', () => {
@@ -189,7 +189,7 @@ socket.on('wordly_start_game', (data) => {
 });
 
 socket.on('wordly_force_leave', () => {
-  window.location.href = '/mode_selection';
+  window.location.href = '/';
 });
 
 socket.on('wordly_opponent_guess', (data) => {
