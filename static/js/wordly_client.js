@@ -205,7 +205,9 @@ socket.on('wordly_opponent_guess', (data) => {
 
 socket.on('wordly_game_over', (data) => {
   // Скрыть все игровые секции
-  document.getElementById('wordSubmission').style.display = 'none';
+  document.querySelectorAll('.game-section').forEach(section => {
+	  section.classList.add('hidden');
+  });
   guessSection.classList.add('hidden');
   evaluationSection.classList.add('hidden');
   gameInfo.classList.add('hidden');
