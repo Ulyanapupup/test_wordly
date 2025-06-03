@@ -21,6 +21,7 @@ const myWordDisplay = document.getElementById('myWord');
 const opponentWordDisplay = document.getElementById('opponentWord');
 const gameInfo = document.getElementById('gameInfo');
 
+const leaveInitialBtn = document.getElementById('leaveInitial');
 const leaveLobbyBtn = document.getElementById('leaveLobby');
 const leaveGameBtn = document.getElementById('leaveGame');
 
@@ -79,15 +80,19 @@ socket.on('wordly_guess_evaluated', (data) => {
   submitGuessBtn.disabled = false;
 });
 
+leaveInitialBtn.addEventListener('click', () => {
+  window.location.href = '/mode_selection'; // Просто перенаправляем на главную
+});
+
 leaveLobbyBtn.addEventListener('click', () => {
-  window.location.href = '/'; // Перенаправляем на главную
+  window.location.href = '/mode_selection';
 });
 
 leaveGameBtn.addEventListener('click', () => {
   if (roomId) {
     socket.emit('leave_wordly_game', { roomId });
   }
-  window.location.href = '/';
+  window.location.href = '/mode_selection';
 });
 
 submitEvaluationBtn.addEventListener('click', () => {
@@ -184,7 +189,7 @@ socket.on('wordly_start_game', (data) => {
 });
 
 socket.on('wordly_force_leave', () => {
-  window.location.href = '/';
+  window.location.href = '/mode_selection';
 });
 
 socket.on('wordly_opponent_guess', (data) => {
@@ -192,10 +197,6 @@ socket.on('wordly_opponent_guess', (data) => {
   guessSection.classList.add('hidden');
   evaluationSection.classList.remove('hidden');
   setupEvaluation(data.guess);
-});
-
-socket.on('wordly_guess_evaluated', (data) => {
-  addGuessToHistory(data.guess, data.evaluation);
 });
 
 socket.on('wordly_game_over', (data) => {
