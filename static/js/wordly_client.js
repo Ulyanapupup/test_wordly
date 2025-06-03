@@ -223,10 +223,6 @@ socket.on('wordly_game_over', (data) => {
 
   document.getElementById('resultMyWord').textContent = myWord;
   document.getElementById('resultOpponentWord').textContent = opponentWord;
-  
-  document.getElementById("evaluationZone").classList.add("hidden");
-  document.getElementById("resultsSection").classList.remove("hidden");
-
 
   // Надпись о победе/поражении внутри итогов
   const resultStatus = document.getElementById('resultStatus');
