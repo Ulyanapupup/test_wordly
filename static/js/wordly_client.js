@@ -80,14 +80,14 @@ socket.on('wordly_guess_evaluated', (data) => {
 });
 
 leaveLobbyBtn.addEventListener('click', () => {
-  window.location.href = '/';
+  window.location.href = '/mode_selection';
 });
 
 leaveGameBtn.addEventListener('click', () => {
   if (roomId) {
     socket.emit('leave_wordly_game', { roomId });
   }
-  window.location.href = '/';
+  window.location.href = '/mode_selection';
 });
 
 submitEvaluationBtn.addEventListener('click', () => {
@@ -161,6 +161,7 @@ socket.on('wordly_room_created', (data) => {
   game.classList.remove('hidden');
   gameStatus.textContent = `Комната создана. Поделитесь этим кодом с другом: ${roomId}`;
   leaveLobbyBtn.classList.remove('hidden');
+  document.getElementById('roomCode').textContent = roomId;
 });
 
 socket.on('wordly_room_joined', (data) => {
@@ -170,6 +171,7 @@ socket.on('wordly_room_joined', (data) => {
   game.classList.remove('hidden');
   gameStatus.textContent = 'Вы присоединились к комнате. Введите ваше слово';
   leaveLobbyBtn.classList.remove('hidden');
+  document.getElementById('roomCode').textContent = roomId;
 });
 
 socket.on('wordly_start_game', (data) => {
@@ -191,7 +193,7 @@ socket.on('wordly_start_game', (data) => {
 });
 
 socket.on('wordly_force_leave', () => {
-  window.location.href = '/';
+  window.location.href = '/mode_selection';
 });
 
 socket.on('wordly_opponent_guess', (data) => {
@@ -202,36 +204,30 @@ socket.on('wordly_opponent_guess', (data) => {
 });
 
 socket.on('wordly_game_over', (data) => {
-  // Скрываем зону догадок, историю догадок и зону оценки
+  const guessArea = document.getElementById('guessArea');
+  guessArea.classList.add('hidden');
+  guessArea.style.display = 'none'; // Дополнительно скрываем рамку/границу
+
   guessSection.classList.add('hidden');
-  guessHistory.parentElement.classList.add('hidden');  // div с историей догадок
+  guessHistory.parentElement.classList.add('hidden');
   evaluationSection.classList.add('hidden');
   gameInfo.classList.add('hidden');
 
-  // Показываем итоговый блок
+  // Скрыть "Зона оценки"
+  document.querySelectorAll('.game-section').forEach(section => {
+    const title = section.querySelector('h2');
+    if (title && title.textContent.includes('Зона оценки')) {
+      section.classList.add('hidden');
+    }
+  });
+
+  // Показать итоги
   const resultsSection = document.getElementById('resultsSection');
   resultsSection.classList.remove('hidden');
 
-  // Заполняем слова
-  const myWord = data.words[playerId];
-  const opponentId = Object.keys(data.words).find(id => id !== playerId);
-  const opponentWord = data.words[opponentId];
-
-  document.getElementById('resultMyWord').textContent = myWord;
-  document.getElementById('resultOpponentWord').textContent = opponentWord;
-
-  // Надпись о победе/поражении внутри итогов
-  const resultStatus = document.getElementById('resultStatus');
-  if (data.winner === playerId) {
-    resultStatus.textContent = 'Поздравляем! Вы выиграли!';
-    resultStatus.style.color = 'green';
-  } else {
-    resultStatus.textContent = 'К сожалению, вы проиграли.';
-    resultStatus.style.color = 'red';
-  }
-
-  // Убираем общий gameStatus (чтобы не дублировалось)
-  gameStatus.textContent = '';
+  document.getElementById('resultMyWord').textContent = data.myWord;
+  document.getElementById('resultOpponentWord').textContent = data.opponentWord;
+  document.getElementById('resultStatus').textContent = data.status;
 });
 
 socket.on('wordly_player_disconnected', () => {
