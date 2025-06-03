@@ -188,7 +188,7 @@ function addGuessToHistory(guess, result) {
 // Socket events
 socket.on('wordly_room_created', (data) => {
   roomId = data.roomId;
-  currentRoomId = data.roomId;
+  currentRoomId = roomId;
   playerId = socket.id;
   lobby.classList.add('hidden');
   game.classList.remove('hidden');
@@ -197,7 +197,7 @@ socket.on('wordly_room_created', (data) => {
 
 socket.on('wordly_room_joined', (data) => {
   roomId = data.roomId;
-  currentRoomId = data.roomId;
+  currentRoomId = roomId;
   playerId = socket.id;
   lobby.classList.add('hidden');
   game.classList.remove('hidden');
