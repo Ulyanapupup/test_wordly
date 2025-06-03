@@ -20,7 +20,9 @@ const guessHistory = document.getElementById('guessHistory');
 const myWordDisplay = document.getElementById('myWord');
 const opponentWordDisplay = document.getElementById('opponentWord');
 const gameInfo = document.getElementById('gameInfo');
+const leaveButton = document.getElementById("leaveButton");
 
+let currentRoomId = null;
 let roomId = null;
 let playerId = null;
 let currentEvaluation = [];
@@ -66,6 +68,49 @@ submitGuessBtn.addEventListener('click', () => {
     submitGuessBtn.disabled = true;
   }
 });
+
+
+
+
+
+leaveButton.addEventListener("click", () => {
+  if (currentRoomId) {
+    socket.emit("leave_room", { room: currentRoomId });
+    console.log("Вышли из комнаты:", currentRoomId);
+    currentRoomId = null;
+  }
+  resetGameState(); // очищаем интерфейс
+  showLobby();      // возвращаем на главную
+});
+
+function showLobby() {
+  lobby.classList.remove("hidden");
+  game.classList.add("hidden");
+}
+
+function resetGameState() {
+  guessInput.value = "";
+  secretWordInput.value = "";
+  myWordDisplay.textContent = "";
+  opponentWordDisplay.textContent = "";
+  guessHistory.innerHTML = "";
+  opponentGuess.textContent = "";
+  gameStatus.textContent = "";
+  evaluationSection.classList.add("hidden");
+  document.getElementById("wordSubmission").style.display = "block";
+  guessSection.classList.add("hidden");
+  gameInfo.classList.add("hidden");
+}
+
+socket.on("opponent_left", (data) => {
+  alert(data.message);
+  resetGameState();
+  showLobby();
+});
+
+
+
+
 
 // Сервер присылает результат оценки слова
 socket.on('wordly_guess_evaluated', (data) => {
@@ -143,6 +188,7 @@ function addGuessToHistory(guess, result) {
 // Socket events
 socket.on('wordly_room_created', (data) => {
   roomId = data.roomId;
+  currentRoomId = data.roomId;
   playerId = socket.id;
   lobby.classList.add('hidden');
   game.classList.remove('hidden');
@@ -151,6 +197,7 @@ socket.on('wordly_room_created', (data) => {
 
 socket.on('wordly_room_joined', (data) => {
   roomId = data.roomId;
+  currentRoomId = data.roomId;
   playerId = socket.id;
   lobby.classList.add('hidden');
   game.classList.remove('hidden');

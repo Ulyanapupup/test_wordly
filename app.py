@@ -578,6 +578,30 @@ def generate_wordly_room_id():
 def game_wordly():
     return render_template('game_mode_wordly.html')
     
+@socketio.on("leave_room")
+def handle_leave(data):
+    room = data["room"]
+    sid = request.sid
+    username = users.get(sid, "Игрок")
+
+    leave_room(room)
+    print(f"{username} покинул комнату {room}")
+
+    room_data = rooms.get(room)
+    if room_data:
+        players = room_data.get("players", [])
+        if sid in players:
+            players.remove(sid)
+
+        if players:
+            # Остался второй игрок — сообщаем ему
+            emit("opponent_left", {"message": "Противник покинул игру."}, to=players[0])
+        else:
+            # Оба игрока покинули комнату — удаляем
+            del rooms[room]
+
+
+    
 
 
 if __name__ == '__main__':
