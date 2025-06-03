@@ -60,8 +60,22 @@ submitGuessBtn.addEventListener('click', () => {
     });
     addGuessToHistory(guess, 'pending');
     guessInput.value = '';
+
+    // Блокируем ввод до получения оценки
+    guessInput.disabled = true;
+    submitGuessBtn.disabled = true;
   }
 });
+
+// Сервер присылает результат оценки слова
+socket.on('wordly_guess_evaluated', (data) => {
+  addGuessToHistory(data.guess, data.evaluation);
+
+  // Разблокируем ввод
+  guessInput.disabled = false;
+  submitGuessBtn.disabled = false;
+});
+
 
 submitEvaluationBtn.addEventListener('click', () => {
   socket.emit('submit_wordly_evaluation', { 
