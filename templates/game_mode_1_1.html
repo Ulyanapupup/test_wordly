@@ -107,27 +107,6 @@
       border-bottom-left-radius: 0;
     }
     
-    #range-selection {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      padding: 20px;
-      margin-top: 20px;
-    }
-    
-    #range-selection input {
-      width: 100px;
-      padding: 12px;
-      border: 2px solid #ccc;
-      border-radius: 8px;
-      margin: 0 10px;
-      font-size: 18px;
-    }
-    
-    #range-selection label {
-      font-size: 18px;
-    }
-    
     #debug-info {
       font-size: 14px;
       color: #666;
@@ -147,13 +126,8 @@
         <h1 class="game-title">Режим {{ mode }}</h1>
       </header>
 
-      <div id="range-selection">
-        <h2>Выберите диапазон чисел</h2>
-        <div style="display: flex; align-items: center; gap: 15px; margin-top: 15px;">
-          <label>От: <input type="number" id="min-range" value="1" min="1"></label>
-          <label>До: <input type="number" id="max-range" value="100" min="2"></label>
-          <button onclick="startGame()" class="btn">Начать игру</button>
-        </div>
+      <div style="text-align: center; margin-top: 20px;">
+        <button onclick="startGame()" class="btn">Начать игру</button>
       </div>
 
       <div class="info-panel">
@@ -168,6 +142,11 @@
             <li>Число четное?</li>
             <li>Оно делится на 3?</li>
             <li>Это простое число?</li>
+            <li>Число положительное?</li>
+            <li>Число однозначное?</li>
+            <li>Число двузначное?</li>
+            <li>Число является степенью другого числа?</li>
+            <li>Сумма цифр числа больше 5?</li>
           </ul>
           <p>Система будет отвечать "да" или "нет".</p>
         </div>
@@ -175,7 +154,7 @@
 
       <div class="chat-container">
         <div id="messages">
-          <div class="message system-message">Выберите диапазон чисел и нажмите "Начать игру"</div>
+          <div class="message system-message">Нажмите "Начать игру", чтобы начать</div>
         </div>
         <div class="chat-input">
           <input id="question" placeholder="Введите вопрос..." disabled>
@@ -200,8 +179,8 @@
 
   <script>
     let secretNumber = null;
-    let minRange = 1;
-    let maxRange = 100;
+    const minRange = -100;  // Фиксированный диапазон
+    const maxRange = 100;   // Фиксированный диапазон
 
     function toggleInfo() {
       const content = document.getElementById('info-content');
@@ -224,14 +203,6 @@
     }
 
     function startGame() {
-      minRange = parseInt(document.getElementById('min-range').value);
-      maxRange = parseInt(document.getElementById('max-range').value);
-      
-      if (minRange >= maxRange) {
-        alert('Максимальное число должно быть больше минимального');
-        return;
-      }
-      
       // Генерируем случайное число
       secretNumber = Math.floor(Math.random() * (maxRange - minRange + 1)) + minRange;
       document.getElementById('secret-number-display').textContent = secretNumber;
@@ -245,9 +216,6 @@
       // Очищаем чат
       document.getElementById('messages').innerHTML = '';
       appendToChat('Система', `Игра началась! Загадано число от ${minRange} до ${maxRange}. Попробуйте угадать его или задавайте вопросы.`);
-      
-      // Скрываем выбор диапазона
-      document.getElementById('range-selection').style.display = 'none';
     }
 
     function ask() {

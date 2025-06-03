@@ -2,5 +2,15 @@
     "больше": "is_greater",
     "меньше": "is_less",
     "равно": "is_equal",
-    "простое": "is_prime"
+    "простое": "is_prime",
+    "простым": "is_prime",
+    "положительное": "is_positive",
+    "положительным": "is_positive",
+    "делится": "is_divisible",
+    "четное": "is_even",
+    "однозначное": "is_single_digit",
+    "двузначное": "is_double_digit",
+    "степенью": "is_power",
+    "модуль": "is_absolute_power",
+    "сумма цифр": "sum_of_digits_greater"
 }
