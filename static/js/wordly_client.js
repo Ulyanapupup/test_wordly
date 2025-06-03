@@ -21,7 +21,6 @@ const myWordDisplay = document.getElementById('myWord');
 const opponentWordDisplay = document.getElementById('opponentWord');
 const gameInfo = document.getElementById('gameInfo');
 
-const leaveInitialBtn = document.getElementById('leaveInitial');
 const leaveLobbyBtn = document.getElementById('leaveLobby');
 const leaveGameBtn = document.getElementById('leaveGame');
 
@@ -78,10 +77,6 @@ socket.on('wordly_guess_evaluated', (data) => {
   // Разблокируем ввод
   guessInput.disabled = false;
   submitGuessBtn.disabled = false;
-});
-
-leaveInitialBtn.addEventListener('click', () => {
-  window.location.href = '/'; // Просто перенаправляем на главную
 });
 
 leaveLobbyBtn.addEventListener('click', () => {
