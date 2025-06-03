@@ -1,5 +1,3 @@
-console.log('game_mode_1_2.js загружен');
-
 const minRange = window.minRange;
 const maxRange = window.maxRange;
 let gameId = null;
