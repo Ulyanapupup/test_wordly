@@ -2,81 +2,76 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Режим {{ mode }}</title>
+  <link rel="stylesheet" href="index.css">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #f5f5f5;
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    #chat {
+    /* Дополнительные стили для чата и подсказок */
+    .chat-container {
+      width: 100%;
       background: white;
-      border-radius: 8px;
+      border-radius: 12px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      padding: 15px;
-      margin-bottom: 20px;
+      padding: 20px;
+      margin-top: 20px;
     }
+    
     #messages {
       height: 300px;
       overflow-y: auto;
       border: 1px solid #ddd;
-      border-radius: 4px;
+      border-radius: 8px;
       padding: 10px;
       margin-bottom: 10px;
       background: #fafafa;
     }
-    #chat-input {
+    
+    .chat-input {
       display: flex;
       gap: 10px;
+      margin-top: 10px;
     }
+    
     #question {
       flex: 1;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-    button {
-      padding: 8px 15px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    #guess-area {
-      background: white;
+      padding: 12px;
+      border: 2px solid #ccc;
       border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      padding: 15px;
-      margin-bottom: 20px;
+      font-size: 18px;
     }
+    
+    .guess-area {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-top: 20px;
+    }
+    
     #guess {
       width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      padding: 12px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
       margin-bottom: 10px;
+      font-size: 18px;
     }
+    
     #guess-result {
       font-weight: bold;
       margin-top: 10px;
+      font-size: 18px;
+      text-align: center;
     }
+    
     .info-panel {
       background: white;
-      border-radius: 8px;
+      border-radius: 12px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      padding: 15px;
-      margin-bottom: 20px;
+      padding: 20px;
+      margin-top: 20px;
     }
+    
     .info-header {
       display: flex;
       justify-content: space-between;
@@ -84,56 +79,57 @@
       cursor: pointer;
       margin-bottom: 10px;
     }
+    
     .info-content {
       border-top: 1px solid #eee;
       padding-top: 10px;
+      font-size: 18px;
     }
-    .exit-btn {
-      display: block;
-      text-align: center;
-      padding: 10px;
-      background-color: #f44336;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-      margin-top: 20px;
-    }
-    .exit-btn:hover {
-      background-color: #d32f2f;
-    }
+    
     .message {
       margin-bottom: 10px;
       padding: 8px 12px;
       border-radius: 18px;
       max-width: 70%;
       word-wrap: break-word;
+      font-size: 18px;
     }
+    
     .user-message {
       background-color: #e3f2fd;
       margin-left: auto;
       border-bottom-right-radius: 0;
     }
+    
     .system-message {
       background-color: #f1f1f1;
       margin-right: auto;
       border-bottom-left-radius: 0;
     }
+    
     #range-selection {
       background: white;
-      border-radius: 8px;
+      border-radius: 12px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      padding: 15px;
-      margin-bottom: 20px;
+      padding: 20px;
+      margin-top: 20px;
     }
+    
     #range-selection input {
-      width: 80px;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      margin: 0 5px;
+      width: 100px;
+      padding: 12px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      margin: 0 10px;
+      font-size: 18px;
     }
+    
+    #range-selection label {
+      font-size: 18px;
+    }
+    
     #debug-info {
-      font-size: 12px;
+      font-size: 14px;
       color: #666;
       text-align: center;
       margin-top: 10px;
@@ -141,54 +137,66 @@
   </style>
 </head>
 <body>
-  <h1>Режим {{ mode }}</h1>
+  <div class="fon">
+    <div class="container">
+      <header>
+        <div class="logo-block">
+          <img src="image/logo.svg" alt="Логотип" class="logo-img" />
+          <h1 class="site-title">Logic Duel</h1>
+        </div>
+        <h1 class="game-title">Режим {{ mode }}</h1>
+      </header>
 
-  <div id="range-selection">
-    <h2>Выберите диапазон чисел</h2>
-    <div>
-      <label>От: <input type="number" id="min-range" value="1" min="1"></label>
-      <label>До: <input type="number" id="max-range" value="100" min="2"></label>
-      <button onclick="startGame()">Начать игру</button>
+      <div id="range-selection">
+        <h2>Выберите диапазон чисел</h2>
+        <div style="display: flex; align-items: center; gap: 15px; margin-top: 15px;">
+          <label>От: <input type="number" id="min-range" value="1" min="1"></label>
+          <label>До: <input type="number" id="max-range" value="100" min="2"></label>
+          <button onclick="startGame()" class="btn">Начать игру</button>
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <div class="info-header" onclick="toggleInfo()">
+          <h2>Подсказки</h2>
+          <span id="toggle-icon">▼</span>
+        </div>
+        <div class="info-content" id="info-content">
+          <p>Вы можете задавать вопросы, например:</p>
+          <ul>
+            <li>Это число больше 50?</li>
+            <li>Число четное?</li>
+            <li>Оно делится на 3?</li>
+            <li>Это простое число?</li>
+          </ul>
+          <p>Система будет отвечать "да" или "нет".</p>
+        </div>
+      </div>
+
+      <div class="chat-container">
+        <div id="messages">
+          <div class="message system-message">Выберите диапазон чисел и нажмите "Начать игру"</div>
+        </div>
+        <div class="chat-input">
+          <input id="question" placeholder="Введите вопрос..." disabled>
+          <button onclick="ask()" class="btn" disabled>Отправить</button>
+        </div>
+      </div>
+
+      <div class="guess-area">
+        <h2>Попробуйте угадать число</h2>
+        <input id="guess" placeholder="Введите число..." disabled>
+        <button onclick="checkGuess()" class="btn" disabled>Проверить</button>
+        <p id="guess-result"></p>
+      </div>
+
+      <div style="margin-top: 20px; text-align: center;">
+        <a href="/mode_selection" class="btn">Выйти в меню</a>
+      </div>
+
+      <div id="debug-info">Загаданное число: <span id="secret-number-display">не выбрано</span></div>
     </div>
   </div>
-
-  <div class="info-panel">
-    <div class="info-header" onclick="toggleInfo()">
-      <h2>Подсказки</h2>
-      <span id="toggle-icon">▼</span>
-    </div>
-    <div class="info-content" id="info-content">
-      <p>Вы можете задавать вопросы, например:</p>
-      <ul>
-        <li>Это число больше 50?</li>
-        <li>Число четное?</li>
-        <li>Оно делится на 3?</li>
-        <li>Это простое число?</li>
-      </ul>
-      <p>Система будет отвечать "да" или "нет".</p>
-    </div>
-  </div>
-
-  <div id="chat">
-    <div id="messages">
-      <div class="message system-message">Выберите диапазон чисел и нажмите "Начать игру"</div>
-    </div>
-    <div id="chat-input">
-      <input id="question" placeholder="Введите вопрос..." disabled>
-      <button onclick="ask()" disabled>Отправить</button>
-    </div>
-  </div>
-
-  <div id="guess-area">
-    <h2>Попробуйте угадать число</h2>
-    <input id="guess" placeholder="Введите число..." disabled>
-    <button onclick="checkGuess()" disabled>Проверить</button>
-    <p id="guess-result"></p>
-  </div>
-
-  <div id="debug-info">Загаданное число: <span id="secret-number-display">не выбрано</span></div>
-
-  <a href="/mode_selection" class="exit-btn">Выйти в меню</a>
 
   <script>
     let secretNumber = null;
@@ -230,9 +238,9 @@
       
       // Активируем элементы интерфейса
       document.getElementById('question').disabled = false;
-      document.querySelector('#chat-input button').disabled = false;
+      document.querySelector('.chat-input button').disabled = false;
       document.getElementById('guess').disabled = false;
-      document.querySelector('#guess-area button').disabled = false;
+      document.querySelector('.guess-area button').disabled = false;
       
       // Очищаем чат
       document.getElementById('messages').innerHTML = '';
@@ -243,30 +251,30 @@
     }
 
     function ask() {
-		const q = document.getElementById('question').value;
-		if (!q.trim()) return;
-		appendToChat('Вы', q);
-		fetch('/ask', {
-			method: 'POST',
-			headers: {'Content-Type': 'application/json'},
-			body: JSON.stringify({
-				question: q, 
-				mode: "1.1",
-				secret_number: secretNumber,
-				min_range: minRange,
-				max_range: maxRange
-			})
-		})
-		.then(res => res.json())
-		.then(data => {
-			appendToChat('Система', data.answer);
-		})
-		.catch(error => {
-			console.error('Error:', error);
-			appendToChat('Система', 'Произошла ошибка при обработке вопроса');
-		});
-		document.getElementById('question').value = '';
-	}
+      const q = document.getElementById('question').value;
+      if (!q.trim()) return;
+      appendToChat('Вы', q);
+      fetch('/ask', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          question: q, 
+          mode: "1.1",
+          secret_number: secretNumber,
+          min_range: minRange,
+          max_range: maxRange
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        appendToChat('Система', data.answer);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        appendToChat('Система', 'Произошла ошибка при обработке вопроса');
+      });
+      document.getElementById('question').value = '';
+    }
 
     function checkGuess() {
       const guess = parseInt(document.getElementById('guess').value);
