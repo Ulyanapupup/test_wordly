@@ -470,7 +470,8 @@ def handle_reply_logic(data):
 
 # В app.py добавим новый обработчик сокетов для Wordly
 @socketio.on('create_wordly_room')
-def handle_create_wordly_room():
+def handle_create_wordly_room(data):
+    word_length = data.get('wordLength', 5)
     room_id = generate_wordly_room_id()
     rooms[room_id] = {
         'players': [request.sid],
@@ -478,10 +479,11 @@ def handle_create_wordly_room():
         'guesses': [],
         'currentTurn': 0,
         'gameOver': False,
-        'type': 'wordly'  # Добавляем тип игры
+        'type': 'wordly',
+        'wordLength': word_length  # Сохраняем длину слова для комнаты
     }
     join_room(room_id)
-    emit('wordly_room_created', {'roomId': room_id})
+    emit('wordly_room_created', {'roomId': room_id, 'wordLength': word_length})
 
 @socketio.on('join_wordly_room')
 def handle_join_wordly_room(data):
@@ -491,7 +493,10 @@ def handle_join_wordly_room(data):
     if room and len(room['players']) == 1 and room.get('type') == 'wordly':
         room['players'].append(request.sid)
         join_room(room_id)
-        emit('wordly_room_joined', {'roomId': room_id}, room=room_id)
+        emit('wordly_room_joined', {
+            'roomId': room_id,
+            'wordLength': room.get('wordLength', 5)
+        }, room=room_id)
     else:
         emit('wordly_error', {'message': 'Room is full or does not exist.'})
 
@@ -506,6 +511,11 @@ def handle_make_wordly_guess(data):
             emit('wordly_error', {'message': 'Не ваш ход.'})
             return
 
+        word_length = room.get('wordLength', 5)
+        if len(guess) != word_length:
+            emit('wordly_error', {'message': f'Догадка должна содержать {word_length} букв'})
+            return
+
         opponent_id = next(pid for pid in room['players'] if pid != request.sid)
         guessed_word = guess.lower()
 
@@ -517,7 +527,6 @@ def handle_make_wordly_guess(data):
             }, room=room_id)
             return
 
-        # Сохраняем догадку без оценки
         room['guesses'].append({
             'player': request.sid,
             'opponent': opponent_id,
@@ -535,6 +544,11 @@ def handle_submit_wordly_word(data):
     room = rooms.get(room_id)
 
     if room and room.get('type') == 'wordly':
+        word_length = room.get('wordLength', 5)
+        if len(word) != word_length:
+            emit('wordly_error', {'message': f'Слово должно содержать {word_length} букв'})
+            return
+
         room['words'][request.sid] = word.lower()
         emit('wordly_update_words', room['words'], room=room_id)
 

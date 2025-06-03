@@ -29,8 +29,11 @@ let playerId = null;
 let currentEvaluation = [];
 let opponentLetters = [];
 
+let wordLength = 5;
+
 createRoomBtn.addEventListener('click', () => {
-  socket.emit('create_wordly_room');
+  wordLength = parseInt(document.getElementById('wordLength').value);
+  socket.emit('create_wordly_room', { wordLength });
 });
 
 joinRoomBtn.addEventListener('click', () => {
@@ -42,7 +45,7 @@ joinRoomBtn.addEventListener('click', () => {
 
 submitWordBtn.addEventListener('click', () => {
   const word = secretWordInput.value.trim();
-  if (word.length === 5) {
+  if (word.length === wordLength) {
     socket.emit('submit_wordly_word', { 
       roomId, 
       word 
@@ -51,22 +54,24 @@ submitWordBtn.addEventListener('click', () => {
     myWordDisplay.textContent = word;
     gameInfo.classList.remove('hidden');
     gameStatus.textContent = 'Дождитесь соперника...';
+  } else {
+    gameStatus.textContent = `Слово должно содержать ${wordLength} букв`;
   }
 });
 
 submitGuessBtn.addEventListener('click', () => {
   const guess = guessInput.value.trim();
-  if (guess.length === 5) {
+  if (guess.length === wordLength) {
     socket.emit('make_wordly_guess', { 
       roomId, 
       guess 
     });
     addGuessToHistory(guess, 'pending');
     guessInput.value = '';
-
-    // Блокируем ввод до получения оценки
     guessInput.disabled = true;
     submitGuessBtn.disabled = true;
+  } else {
+    gameStatus.textContent = `Догадка должна содержать ${wordLength} букв`;
   }
 });
 
@@ -107,6 +112,9 @@ function createLetterElement(letter, index) {
   letterElement.dataset.index = index;
   letterElement.dataset.state = 'none';
   
+  letterElement.style.width = `${40 - (wordLength - 5) * 2}px`;
+  letterElement.style.height = `${40 - (wordLength - 5) * 2}px`;
+  
   letterElement.addEventListener('click', () => {
     const states = ['none', 'green', 'yellow'];
     const currentState = letterElement.dataset.state;
@@ -133,20 +141,20 @@ function setupEvaluation(guess) {
 }
 
 function addGuessToHistory(guess, result) {
-  // Не отображать строку, если результат еще не готов
   if (result === 'pending') return;
 
   const guessElement = document.createElement('div');
   guessElement.className = 'guess-row';
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < wordLength; i++) {
     const letterBox = document.createElement('div');
     letterBox.className = 'letter';
     letterBox.textContent = guess[i];
+    letterBox.style.width = `${40 - (wordLength - 5) * 2}px`;
+    letterBox.style.height = `${40 - (wordLength - 5) * 2}px`;
 
-    const state = result[i]; // 'green', 'yellow', 'gray'
+    const state = result[i];
     letterBox.classList.add(state);
-
     guessElement.appendChild(letterBox);
   }
 
