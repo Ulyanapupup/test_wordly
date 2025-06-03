@@ -486,6 +486,7 @@ def handle_create_wordly_room(data):
     emit('wordly_room_created', {'roomId': room_id, 'wordLength': word_length})
 
 @socketio.on('join_wordly_room')
+@socketio.on('join_wordly_room')
 def handle_join_wordly_room(data):
     room_id = data['roomId']
     room = rooms.get(room_id)
@@ -495,7 +496,7 @@ def handle_join_wordly_room(data):
         join_room(room_id)
         emit('wordly_room_joined', {
             'roomId': room_id,
-            'wordLength': room.get('wordLength', 5)
+            'wordLength': room.get('wordLength', 5)  # Убедимся, что передаем длину слова
         }, room=room_id)
     else:
         emit('wordly_error', {'message': 'Room is full or does not exist.'})

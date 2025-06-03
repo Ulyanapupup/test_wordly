@@ -105,6 +105,25 @@ submitEvaluationBtn.addEventListener('click', () => {
   gameStatus.textContent = 'Дождитесь соперника...';
 });
 
+function updateInputFields(length) {
+  // Обновляем атрибуты полей ввода
+  secretWordInput.maxLength = length;
+  secretWordInput.pattern = `[А-Яа-яЁё]{${length}}`;
+  secretWordInput.placeholder = `Введите слово из ${length} букв`;
+  secretWordInput.title = `Слово должно содержать ${length} букв`;
+  
+  guessInput.maxLength = length;
+  guessInput.pattern = `[А-Яа-яЁё]{${length}}`;
+  guessInput.placeholder = `Введите догадку из ${length} букв`;
+  guessInput.title = `Догадка должна содержать ${length} букв`;
+  
+  // Обновляем размеры букв в истории
+  document.querySelectorAll('.guess-row .letter').forEach(letter => {
+    letter.style.width = `${40 - (wordLength - 5) * 2}px`;
+    letter.style.height = `${40 - (wordLength - 5) * 2}px`;
+  });
+}
+
 function createLetterElement(letter, index) {
   const letterElement = document.createElement('div');
   letterElement.className = 'letter';
@@ -132,7 +151,7 @@ function createLetterElement(letter, index) {
 
 function setupEvaluation(guess) {
   opponentGuess.innerHTML = '';
-  currentEvaluation = new Array(5).fill(null);
+  currentEvaluation = new Array(wordLength).fill(null); // Используем wordLength вместо фиксированного 5
   opponentLetters = guess.split('');
   
   opponentLetters.forEach((letter, index) => {
@@ -165,6 +184,8 @@ function addGuessToHistory(guess, result) {
 socket.on('wordly_room_created', (data) => {
   roomId = data.roomId;
   playerId = socket.id;
+  wordLength = data.wordLength;
+  updateInputFields(wordLength);
   lobby.classList.add('hidden');
   game.classList.remove('hidden');
   gameStatus.textContent = `Комната создана. Поделитесь этим кодом с другом: ${roomId}`;
@@ -175,11 +196,20 @@ socket.on('wordly_room_created', (data) => {
 socket.on('wordly_room_joined', (data) => {
   roomId = data.roomId;
   playerId = socket.id;
+  wordLength = data.wordLength; // Получаем длину слова из данных комнаты
+  updateInputFields(wordLength);
+  
   lobby.classList.add('hidden');
   game.classList.remove('hidden');
-  gameStatus.textContent = 'Вы присоединились к комнате. Введите ваше слово';
+  gameStatus.textContent = `Вы присоединились к комнате. Введите слово из ${wordLength} букв`;
   leaveLobbyBtn.classList.remove('hidden');
   document.getElementById('roomCode').textContent = roomId;
+  
+  // Обновляем подсказки в полях ввода
+  secretWordInput.placeholder = `Введите слово из ${wordLength} букв`;
+  secretWordInput.pattern = `[А-Яа-яЁё]{${wordLength}}`;
+  guessInput.placeholder = `Введите догадку из ${wordLength} букв`;
+  guessInput.pattern = `[А-Яа-яЁё]{${wordLength}}`;
 });
 
 socket.on('wordly_start_game', (data) => {
