@@ -1,5 +1,5 @@
 const socket = io();
-
+guessArea
 // UI Elements
 const lobby = document.getElementById('lobby');
 const game = document.getElementById('game');
@@ -204,8 +204,6 @@ socket.on('wordly_opponent_guess', (data) => {
 });
 
 socket.on('wordly_game_over', (data) => {
-  const guessArea = document.getElementById('guessArea');
-  guessArea.classList.add('hidden');  // скрыть заголовок и догадку
   guessHistory.parentElement.classList.add('hidden');  // скрыть историю догадок
   evaluationSection.classList.add('hidden');
   gameInfo.classList.add('hidden');
