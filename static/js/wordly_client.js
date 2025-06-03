@@ -1,5 +1,5 @@
 const socket = io();
-guessArea
+
 // UI Elements
 const lobby = document.getElementById('lobby');
 const game = document.getElementById('game');
