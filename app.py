@@ -578,29 +578,25 @@ def generate_wordly_room_id():
 def game_wordly():
     return render_template('game_mode_wordly.html')
     
-@socketio.on("leave_room")
-def handle_leave(data):
-    room = data["room"]
-    sid = request.sid
-    username = users.get(sid, "Игрок")
-
-    leave_room(room)
-    print(f"{username} покинул комнату {room}")
-
-    room_data = rooms.get(room)
-    if room_data:
-        players = room_data.get("players", [])
-        if sid in players:
-            players.remove(sid)
-
-        if players:
-            # Остался второй игрок — сообщаем ему
-            emit("opponent_left", {"message": "Противник покинул игру."}, to=players[0])
+# Добавим новый обработчик сокетов
+@socketio.on('leave_wordly_game')
+def handle_leave_wordly_game(data):
+    room_id = data['roomId']
+    session_id = request.sid
+    
+    if room_id in rooms and rooms[room_id].get('type') == 'wordly':
+        # Удаляем игрока из комнаты
+        if 'players' in rooms[room_id] and session_id in rooms[room_id]['players']:
+            rooms[room_id]['players'].remove(session_id)
+            
+            # Уведомляем другого игрока о выходе
+            emit('wordly_force_leave', {}, room=room_id)
+            
+            # Если комната пуста, удаляем её
+            if not rooms[room_id]['players']:
+                del rooms[room_id]
         else:
-            # Оба игрока покинули комнату — удаляем
-            del rooms[room]
-
-
+            emit('wordly_error', {'message': 'Вы не в этой комнате'})
     
 
 

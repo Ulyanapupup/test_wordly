@@ -20,9 +20,10 @@ const guessHistory = document.getElementById('guessHistory');
 const myWordDisplay = document.getElementById('myWord');
 const opponentWordDisplay = document.getElementById('opponentWord');
 const gameInfo = document.getElementById('gameInfo');
-const leaveButton = document.getElementById("leaveButton");
 
-let currentRoomId = null;
+const leaveLobbyBtn = document.getElementById('leaveLobby');
+const leaveGameBtn = document.getElementById('leaveGame');
+
 let roomId = null;
 let playerId = null;
 let currentEvaluation = [];
@@ -69,49 +70,6 @@ submitGuessBtn.addEventListener('click', () => {
   }
 });
 
-
-
-
-
-leaveButton.addEventListener("click", () => {
-  if (currentRoomId) {
-    socket.emit("leave_room", { room: currentRoomId });
-    console.log("Вышли из комнаты:", currentRoomId);
-    currentRoomId = null;
-  }
-  resetGameState(); // очищаем интерфейс
-  showLobby();      // возвращаем на главную
-});
-
-function showLobby() {
-  lobby.classList.remove("hidden");
-  game.classList.add("hidden");
-}
-
-function resetGameState() {
-  guessInput.value = "";
-  secretWordInput.value = "";
-  myWordDisplay.textContent = "";
-  opponentWordDisplay.textContent = "";
-  guessHistory.innerHTML = "";
-  opponentGuess.textContent = "";
-  gameStatus.textContent = "";
-  evaluationSection.classList.add("hidden");
-  document.getElementById("wordSubmission").style.display = "block";
-  guessSection.classList.add("hidden");
-  gameInfo.classList.add("hidden");
-}
-
-socket.on("opponent_left", (data) => {
-  alert(data.message);
-  resetGameState();
-  showLobby();
-});
-
-
-
-
-
 // Сервер присылает результат оценки слова
 socket.on('wordly_guess_evaluated', (data) => {
   addGuessToHistory(data.guess, data.evaluation);
@@ -121,6 +79,16 @@ socket.on('wordly_guess_evaluated', (data) => {
   submitGuessBtn.disabled = false;
 });
 
+leaveLobbyBtn.addEventListener('click', () => {
+  window.location.href = '/'; // Перенаправляем на главную
+});
+
+leaveGameBtn.addEventListener('click', () => {
+  if (roomId) {
+    socket.emit('leave_wordly_game', { roomId });
+  }
+  window.location.href = '/';
+});
 
 submitEvaluationBtn.addEventListener('click', () => {
   socket.emit('submit_wordly_evaluation', { 
@@ -188,20 +156,20 @@ function addGuessToHistory(guess, result) {
 // Socket events
 socket.on('wordly_room_created', (data) => {
   roomId = data.roomId;
-  currentRoomId = roomId;
   playerId = socket.id;
   lobby.classList.add('hidden');
   game.classList.remove('hidden');
   gameStatus.textContent = `Комната создана. Поделитесь этим кодом с другом: ${roomId}`;
+  leaveLobbyBtn.classList.remove('hidden');
 });
 
 socket.on('wordly_room_joined', (data) => {
   roomId = data.roomId;
-  currentRoomId = roomId;
   playerId = socket.id;
   lobby.classList.add('hidden');
   game.classList.remove('hidden');
   gameStatus.textContent = 'Вы присоединились к комнате. Введите ваше слово';
+  leaveLobbyBtn.classList.remove('hidden');
 });
 
 socket.on('wordly_start_game', (data) => {
@@ -211,6 +179,12 @@ socket.on('wordly_start_game', (data) => {
   } else {
     gameStatus.textContent = 'Игра началась! Ждём ход соперника...';
   }
+  leaveLobbyBtn.classList.add('hidden');
+  leaveGameBtn.classList.remove('hidden');
+});
+
+socket.on('wordly_force_leave', () => {
+  window.location.href = '/';
 });
 
 socket.on('wordly_opponent_guess', (data) => {

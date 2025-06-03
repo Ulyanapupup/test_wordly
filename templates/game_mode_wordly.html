@@ -87,19 +87,34 @@
 	font-size: 20px;
 	font-weight: bold;
 	}
+	
+	#leaveLobby, #leaveGame {
+	  background-color: #ff6b6b;
+	  color: white;
+	  border: none;
+	  border-radius: 5px;
+	  padding: 10px 15px;
+	  margin-top: 20px;
+	  cursor: pointer;
+	}
+
+	#leaveLobby:hover, #leaveGame:hover {
+	  background-color: #ff5252;
+	}
   </style>
 </head>
 <body>
-  <button id="leaveButton" style="position: fixed; top: 10px; right: 10px; z-index: 999;">Покинуть игру</button>
   <div id="lobby">
     <h1>Wordly</h1>
     <button id="createRoom">Создать комнату</button>
     <p>или</p>
     <input type="text" id="roomIdInput" placeholder="Введите код комнаты" />
     <button id="joinRoom">Присоединиться</button>
+	<button id="leaveLobby" class="hidden">Покинуть игру</button>
   </div>
   
   <div id="game" class="hidden">
+   <button id="leaveGame">Покинуть игру</button>
     <div class="game-container">
       <div class="game-section">
         <h2>Ваша зона для догадки</h2>
