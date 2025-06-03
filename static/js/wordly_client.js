@@ -81,7 +81,7 @@ function createLetterElement(letter, index) {
   letterElement.dataset.state = 'none';
   
   letterElement.addEventListener('click', () => {
-    const states = ['none', 'green', 'yellow', 'gray'];
+    const states = ['none', 'green', 'yellow'];
     const currentState = letterElement.dataset.state;
     const currentIndex = states.indexOf(currentState);
     const nextState = states[(currentIndex + 1) % states.length];
@@ -107,17 +107,25 @@ function setupEvaluation(guess) {
 
 function addGuessToHistory(guess, result) {
   const guessElement = document.createElement('div');
-  guessElement.className = 'guess';
-  
-  if (result === 'pending') {
-    guessElement.textContent = `Ваша догадка: ${guess} (waiting for evaluation)`;
-    guessElement.style.color = '#999';
-  } else {
-    const resultStr = result.map((color, index) => 
-      `${guess[index]}: ${color || 'none'}`).join(', ');
-    guessElement.textContent = `Ваша догадка: ${guess} - ${resultStr}`;
+  guessElement.className = 'guess-row';
+
+  for (let i = 0; i < 5; i++) {
+    const letterBox = document.createElement('div');
+    letterBox.className = 'letter';
+
+    letterBox.textContent = guess[i];
+
+    if (result === 'pending') {
+      letterBox.style.backgroundColor = '#ddd'; // ожидание — нейтральный серый
+      letterBox.style.color = '#000';
+    } else {
+      const state = result[i];
+      letterBox.classList.add(state); // применяет классы .green, .yellow
+    }
+
+    guessElement.appendChild(letterBox);
   }
-  
+
   guessHistory.appendChild(guessElement);
 }
 
