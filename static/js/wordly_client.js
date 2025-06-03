@@ -156,7 +156,6 @@ socket.on('wordly_opponent_guess', (data) => {
 
 socket.on('wordly_guess_evaluated', (data) => {
   addGuessToHistory(data.guess, data.evaluation);
-  gameStatus.textContent = 'Ваш ход угадывать';
 });
 
 socket.on('wordly_game_over', (data) => {
@@ -189,6 +188,17 @@ socket.on('wordly_guess_made', (data) => {
   });
   
   guessHistory.appendChild(guessElement);
+});
+
+socket.on('wordly_next_turn', (data) => {
+  const isMyTurn = data.playerId === socket.id;
+  gameStatus.textContent = isMyTurn 
+    ? 'Ваш ход: угадайте слово соперника' 
+    : 'Ход соперника: ожидайте...';
+
+  // отключить ввод для игрока, если не его ход
+  guessInput.disabled = !isMyTurn;
+  submitGuessBtn.disabled = !isMyTurn;
 });
 
 socket.on('wordly_update_words', (words) => {

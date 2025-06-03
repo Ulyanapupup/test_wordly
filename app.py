@@ -465,6 +465,8 @@ def handle_reply_logic(data):
         
         
         
+        
+        
 
 # В app.py добавим новый обработчик сокетов для Wordly
 @socketio.on('create_wordly_room')
@@ -553,12 +555,11 @@ def handle_submit_wordly_evaluation(data):
             if guess_data['opponent'] == request.sid and guess_data['result'] is None:
                 guess_data['result'] = evaluation
 
-                # Отправляем обоим игрокам обновление
+                # Только отправителю догадки
                 emit('wordly_guess_evaluated', {
                     'guess': guess_data['guess'],
-                    'evaluation': evaluation,
-                    'player': guess_data['player']
-                }, room=room_id)
+                    'evaluation': evaluation
+                }, to=guess_data['player'])
 
                 # Передаём ход
                 room['currentTurn'] = (room['currentTurn'] + 1) % 2
