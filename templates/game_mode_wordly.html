@@ -144,8 +144,8 @@
       <div class="game-section">
         <h2>Ваша зона для догадки</h2>
         <div id="guessSection" class="hidden">
-          <input type="text" id="guessInput" maxlength="5" placeholder="Введите свое предположение"
-			pattern="[А-Яа-яЁё]{5}" title="" />
+          <input type="text" id="guessInput" maxlength="8" placeholder="Введите свое предположение"
+			pattern="[А-Яа-яЁё]{5,8}" title="" />
           <button id="submitGuess">Отправить</button>
         </div>
 		
@@ -163,8 +163,8 @@
       <div class="game-section">
         <h2>Зона оценки</h2>
         <div id="wordSubmission">
-          <input type="text" id="secretWord" maxlength="5" placeholder="Введите ваше слово"
-			pattern="[А-Яа-яЁё]{5}" title="" />
+          <input type="text" id="secretWord" maxlength="8" placeholder="Введите ваше слово"
+			pattern="[А-Яа-яЁё]{5,8}" title="" />
           <button id="submitWord">Отправить слово</button>
         </div>
         <div id="evaluationSection" class="hidden">
