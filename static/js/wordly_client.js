@@ -138,9 +138,13 @@ socket.on('wordly_room_joined', (data) => {
   gameStatus.textContent = 'Вы присоединились к комнате. Введите ваше слово';
 });
 
-socket.on('wordly_start_game', () => {
-  gameStatus.textContent = 'Игра началась! Сделайте вашу догадку';
-  guessSection.classList.remove('hidden');
+socket.on('wordly_start_game', (data) => {
+  if (data.firstPlayer === playerId) {
+    gameStatus.textContent = 'Игра началась! Ваш ход';
+    guessSection.classList.remove('hidden');
+  } else {
+    gameStatus.textContent = 'Игра началась! Ждём ход соперника...';
+  }
 });
 
 socket.on('wordly_opponent_guess', (data) => {

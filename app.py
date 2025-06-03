@@ -493,59 +493,79 @@ def handle_join_wordly_room(data):
     else:
         emit('wordly_error', {'message': 'Room is full or does not exist.'})
 
-@socketio.on('submit_wordly_word')
-def handle_submit_wordly_word(data):
-    room_id = data['roomId']
-    word = data['word']
-    room = rooms.get(room_id)
-    
-    if room and room.get('type') == 'wordly':
-        room['words'][request.sid] = word.lower()
-        emit('wordly_update_words', room['words'], room=room_id)
-        
-        if len(room['words']) == 2:
-            emit('wordly_start_game', room=room_id)
-
 @socketio.on('make_wordly_guess')
 def handle_make_wordly_guess(data):
     room_id = data['roomId']
     guess = data['guess']
     room = rooms.get(room_id)
-    
+
     if room and not room['gameOver'] and room.get('type') == 'wordly':
-        opponent_id = next(id for id in room['players'] if id != request.sid)
-        opponent_word = room['words'].get(opponent_id, '')
+        if request.sid != room['players'][room['currentTurn']]:
+            emit('wordly_error', {'message': 'Не ваш ход.'})
+            return
+
+        opponent_id = next(pid for pid in room['players'] if pid != request.sid)
         guessed_word = guess.lower()
-        
-        if guessed_word == opponent_word:
+
+        if guessed_word == room['words'].get(opponent_id, ''):
             room['gameOver'] = True
             emit('wordly_game_over', {
                 'winner': request.sid,
                 'words': room['words']
             }, room=room_id)
             return
-        
-        emit('wordly_opponent_guess', {'guess': guessed_word}, to=opponent_id)
-        emit('wordly_guess_sent')
 
+        # Сохраняем догадку без оценки
+        room['guesses'].append({
+            'player': request.sid,
+            'opponent': opponent_id,
+            'guess': guessed_word,
+            'result': None
+        })
+
+        emit('wordly_opponent_guess', {'guess': guessed_word}, to=opponent_id)
+        emit('wordly_guess_sent', room=request.sid)
+
+@socketio.on('submit_wordly_word')
+def handle_submit_wordly_word(data):
+    room_id = data['roomId']
+    word = data['word']
+    room = rooms.get(room_id)
+
+    if room and room.get('type') == 'wordly':
+        room['words'][request.sid] = word.lower()
+        emit('wordly_update_words', room['words'], room=room_id)
+
+        if len(room['words']) == 2:
+            first_player = room['players'][room['currentTurn']]
+            emit('wordly_start_game', {'firstPlayer': first_player}, room=room_id)
+            emit('wordly_next_turn', {'playerId': first_player}, room=room_id)
+            
 @socketio.on('submit_wordly_evaluation')
 def handle_submit_wordly_evaluation(data):
     room_id = data['roomId']
     evaluation = data['evaluation']
     room = rooms.get(room_id)
-    
+
     if room and not room['gameOver'] and room.get('type') == 'wordly':
-        last_guess = room['guesses'][-1] if room['guesses'] else None
-        if last_guess:
-            last_guess['result'] = evaluation
-            
-            emit('wordly_guess_evaluated', {
-                'guess': last_guess['guess'],
-                'evaluation': evaluation
-            }, room=room_id)
-            
-            room['currentTurn'] = (room['currentTurn'] + 1) % 2
-            emit('wordly_next_turn', {'playerId': room['players'][room['currentTurn']]}, room=room_id)
+        # Находим последнюю догадку без оценки от соперника
+        for guess_data in reversed(room['guesses']):
+            if guess_data['opponent'] == request.sid and guess_data['result'] is None:
+                guess_data['result'] = evaluation
+
+                # Отправляем обоим игрокам обновление
+                emit('wordly_guess_evaluated', {
+                    'guess': guess_data['guess'],
+                    'evaluation': evaluation,
+                    'player': guess_data['player']
+                }, room=room_id)
+
+                # Передаём ход
+                room['currentTurn'] = (room['currentTurn'] + 1) % 2
+                emit('wordly_next_turn', {
+                    'playerId': room['players'][room['currentTurn']]
+                }, room=room_id)
+                break
 
 def generate_wordly_room_id():
     import random
@@ -556,7 +576,6 @@ def generate_wordly_room_id():
 @app.route('/game/wordly')
 def game_wordly():
     return render_template('game_mode_wordly.html')
-    
     
 
 
