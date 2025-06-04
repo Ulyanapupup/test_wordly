@@ -47,7 +47,7 @@
       width: 48%;
       padding: 20px;
       border-radius: 12px;
-      background-color: #FFF8E1; /* Светло-желтый фон */
+      background-color: #fff8e1b6;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     
@@ -72,7 +72,7 @@
     #gameInfo {
       margin-top: 20px;
       padding: 15px;
-      background: #FFF8E1; /* Светло-желтый фон */
+      background: #FFF8E1;
       border-radius: 8px;
     }
     
@@ -101,7 +101,7 @@
       font-size: 18px;
       border-radius: 8px;
       margin-left: 10px;
-      max-width: 120px; /* Уменьшенная ширина */
+      max-width: 120px;
       display: inline-block;
     }
     
@@ -113,16 +113,25 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      margin-top: 15px; /* Отступ сверху */
-      margin-bottom: 15px; /* Отступ снизу */
+      margin-top: 15px;
+      margin-bottom: 15px;
     }
 
     #guessResults {
-      margin-top: 20px; /* Отступ для заголовка "История догадок" */
+      margin-top: 20px;
     }
 
     #evaluationSection {
-      margin-bottom: 20px; /* Отступ после зоны оценки */
+      margin-bottom: 20px;
+    }
+
+    #evaluationSection p {
+      margin-bottom: 10px; /* Отступ после "Догадка соперника" */
+    }
+
+    /* Общие стили текста */
+    h1, h2, h3, p, label {
+      transition: font-size 0.3s ease;
     }
 
     /* Адаптивные стили */
@@ -146,6 +155,16 @@
         height: 35px;
         font-size: 18px;
       }
+
+      h2 {
+        font-size: 1.5em;
+      }
+      h3 {
+        font-size: 1.3em;
+      }
+      p, label, .btn {
+        font-size: 1em;
+      }
     }
 
     @media (max-width: 900px) {
@@ -158,6 +177,7 @@
 
       .game-title {
         margin-top: 10px;
+        font-size: 1.8em;
       }
 
       #lobby {
@@ -189,6 +209,16 @@
         font-size: 16px;
         max-width: 100px;
       }
+
+      h2 {
+        font-size: 1.4em;
+      }
+      h3 {
+        font-size: 1.2em;
+      }
+      p, label {
+        font-size: 0.95em;
+      }
     }
 
     @media (max-width: 600px) {
@@ -202,7 +232,7 @@
       }
 
       #wordLength {
-        font-size: 16px;
+        font-size: 14px;
         padding: 6px;
         max-width: 80px;
         margin-left: 5px;
@@ -211,14 +241,62 @@
       .btn {
         width: 100%;
         margin: 5px 0;
+        font-size: 14px;
+        padding: 8px 12px;
       }
 
       #roomIdInput {
         max-width: 100%;
+        font-size: 14px;
       }
 
       .game-section, .resultsSection {
         padding: 15px;
+      }
+
+      h1 {
+        font-size: 1.6em;
+      }
+      h2 {
+        font-size: 1.3em;
+      }
+      h3 {
+        font-size: 1.1em;
+      }
+      p, label {
+        font-size: 0.9em;
+      }
+
+      .letter {
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+      }
+
+      #guessInput, #secretWord {
+        font-size: 14px;
+        padding: 6px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      h1 {
+        font-size: 1.4em;
+      }
+      h2 {
+        font-size: 1.2em;
+      }
+      h3 {
+        font-size: 1em;
+      }
+      p, label {
+        font-size: 0.85em;
+      }
+
+      .letter {
+        width: 25px;
+        height: 25px;
+        font-size: 12px;
       }
     }
   </style>
