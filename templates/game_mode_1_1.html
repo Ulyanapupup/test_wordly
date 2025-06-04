@@ -171,9 +171,21 @@
       text-align: center;
       padding: 20px;
     }
-    @media (max-width: 1250px) {
-        .message {max-width: 70%;}
-    }
+	@media (max-width: 560px) {
+	  .chat-input {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.chat-input button.btn {
+		width: 100%;
+		font-size: 20px;
+	}
+
+	#answer {
+		width: 100%;
+		font-size: 18px;
+	}
   </style>
 </head>
 <body>
