@@ -75,7 +75,7 @@ def game_mode(mode):
 def game_mode_1_2():
     return render_template('game_mode_1_2.html')
     
-    @app.route('/game/wordly/single')
+@app.route('/game/wordly/single')
 def game_wordly_single():
     return render_template('wor1.html')
 
