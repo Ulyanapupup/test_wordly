@@ -126,7 +126,31 @@
     }
 
     #evaluationSection p {
-      margin-bottom: 10px; /* Отступ после "Догадка соперника" */
+      margin-bottom: 10px;
+    }
+
+    /* Стили для кнопки "Покинуть игру" */
+    #leaveGame, #leaveLobby {
+      padding: 12px 24px;
+      width: auto;
+      min-width: 150px;
+      font-size: 18px;
+      margin: 10px auto;
+      display: block;
+    }
+
+    /* Стили для статуса игры */
+    #gameStatus {
+      color: white;
+      font-size: 18px;
+      margin-top: 20px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    /* Отступ для кнопки submitEvaluation */
+    #submitEvaluation {
+      margin-top: 15px;
     }
 
     /* Общие стили текста */
@@ -164,6 +188,16 @@
       }
       p, label, .btn {
         font-size: 0.9em;
+      }
+
+      #leaveGame, #leaveLobby {
+        font-size: 16px;
+        min-width: 130px;
+        padding: 10px 20px;
+      }
+
+      #gameStatus {
+        font-size: 16px;
       }
     }
 
@@ -219,6 +253,10 @@
       p, label {
         font-size: 0.95em;
       }
+
+      #submitEvaluation {
+        margin-top: 12px;
+      }
     }
 
     @media (max-width: 600px) {
@@ -243,6 +281,11 @@
         margin: 5px 0;
         font-size: 14px;
         padding: 8px 12px;
+      }
+
+      #leaveGame, #leaveLobby {
+        width: 100%;
+        max-width: 200px;
       }
 
       #roomIdInput {
@@ -277,6 +320,15 @@
         font-size: 14px;
         padding: 6px;
       }
+
+      #gameStatus {
+        font-size: 14px;
+        padding: 8px;
+      }
+
+      #submitEvaluation {
+        margin-top: 10px;
+      }
     }
 
     @media (max-width: 400px) {
@@ -297,6 +349,12 @@
         width: 25px;
         height: 25px;
         font-size: 12px;
+      }
+
+      #leaveGame, #leaveLobby {
+        max-width: 180px;
+        font-size: 13px;
+        padding: 8px 12px;
       }
     }
   </style>
