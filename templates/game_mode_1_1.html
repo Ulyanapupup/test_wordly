@@ -88,7 +88,9 @@
       display: flex;
       gap: 10px;
       margin-top: 10px;
+      flex-wrap: wrap;
     }
+
     
     #question {
       flex: 1;
@@ -105,6 +107,25 @@
       padding: 20px;
       margin-top: 20px;
     }
+    .guess-input {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .guess-input input#guess {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .guess-input button.btn {
+      white-space: nowrap;
+      padding: 10px 10px;
+      font-size: 25px;
+    }
+    
     
     #guess {
       width: 100%;
@@ -112,7 +133,6 @@
       border: 2px solid #ccc;
       border-radius: 8px;
       margin-top: 10px;
-      margin-bottom: 10px;
       font-size: 18px;
     }
     
@@ -171,21 +191,27 @@
       text-align: center;
       padding: 20px;
     }
-	@media (max-width: 560px) {
-	  .chat-input {
-		flex-direction: column;
-		align-items: stretch;
-	}
+    @media (max-width: 1250px) {
+        .message {max-width: 70%;}
+    }
+    @media (max-width: 900px) {
+      .chat-input,
+      .guess-input {
+        flex-direction: column;
+        align-items: stretch;
+      }
 
-	.chat-input button.btn {
-		width: 100%;
-		font-size: 20px;
-	}
+      .chat-input input#question,
+      .guess-input input#guess {
+        width: 100%;
+      }
 
-	#answer {
-		width: 100%;
-		font-size: 18px;
-	}
+      .chat-input button.btn,
+      .guess-input button.btn {
+        width: 100%;
+        text-align: center;
+      }
+    }
   </style>
 </head>
 <body>
@@ -193,7 +219,7 @@
     <div class="container">
       <header>
         <div class="logo-block">
-          <img src="/static/image/logo.svg" alt="Логотип" class="logo-img" />
+          <img src="image/logo.svg" alt="Логотип" class="logo-img" />
           <h1 class="site-title">Logic Duel</h1>
         </div>
         <h1 class="game-title">Угадай число</h1>
@@ -234,12 +260,14 @@
 
         <div class="guess-area">
           <h2>Попробуйте угадать число</h2>
-          <input id="guess" placeholder="Введите число..." disabled>
-          <button onclick="checkGuess()" class="btn" disabled>Проверить</button>
+          <div class="guess-input">
+            <input id="guess" placeholder="Введите число..." disabled>
+            <button onclick="checkGuess()" class="btn" disabled>Проверить</button>
+          </div>
           <p id="guess-result"></p>
         </div>
 
-        <div style="paddin: 20px; text-align: center;">
+        <div style="margin-top: 20px; text-align: center;">
           <a href="/mode_selection" class="btn">Выйти в меню</a>
         </div>
 

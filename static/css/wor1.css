@@ -1,0 +1,77 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0; padding: 20px;
+}
+.container {
+    max-width: 500px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px #ccc;
+}
+h1, h2 {
+    text-align: center;
+}
+input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin: 6px 0 12px 0;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+button {
+    width: 100%;
+    padding: 10px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+button:hover {
+    background: #218838;
+}
+.hidden {
+    display: none;
+}
+.guess-row {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0;
+}
+.letter-box {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #999;
+    margin: 0 4px;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 40px;
+    text-align: center;
+    text-transform: uppercase;
+    user-select: none;
+    border-radius: 4px;
+}
+.correct {
+    background-color: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+.present {
+    background-color: #ffc107;
+    color: black;
+    border-color: #ffc107;
+}
+.absent {
+    background-color: #ccc;
+    color: white;
+    border-color: #ccc;
+}
+#message {
+    text-align: center;
+    margin-top: 12px;
+    font-weight: bold;
+}
