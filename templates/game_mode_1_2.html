@@ -1,33 +1,12 @@
-<!-- game_mode_1_2.html -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Режим 1.2</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Режим 1.2 - Компьютер угадывает</title>
+  <link rel="stylesheet" href="/static/index.css">
   <style>
-    /* Добавим стили для выбора диапазона */
-    .range-selection {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      padding: 20px;
-      margin-top: 20px;
-    }
-    
-    .range-selection input {
-      width: 100px;
-      padding: 12px;
-      border: 2px solid #ccc;
-      border-radius: 8px;
-      margin: 0 10px;
-      font-size: 18px;
-    }
-    
-    .range-selection label {
-      font-size: 18px;
-    }
-    
+    /* Стили из game_mode_1_1.html */
     .chat-container {
       width: 100%;
       background: white;
@@ -45,6 +24,42 @@
       padding: 10px;
       margin-bottom: 10px;
       background: #fafafa;
+    }
+    
+    .chat-input {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    #answer {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      font-size: 18px;
+    }
+    
+    .info-panel {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-top: 20px;
+    }
+    
+    .info-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    
+    .info-content {
+      border-top: 1px solid #eee;
+      padding-top: 10px;
+      font-size: 18px;
     }
     
     .message {
@@ -68,18 +83,18 @@
       border-bottom-left-radius: 0;
     }
     
-    .input-area {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
+    .range-selector {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-top: 20px;
     }
     
-    #answer {
-      flex: 1;
-      padding: 12px;
-      border: 2px solid #ccc;
-      border-radius: 8px;
-      font-size: 18px;
+    .range-selector select, .range-selector input {
+      padding: 10px;
+      font-size: 16px;
+      margin-right: 10px;
     }
   </style>
 </head>
@@ -94,75 +109,194 @@
         <h1 class="game-title">Компьютер угадывает число</h1>
       </header>
 
-      <div class="range-selection">
+      <div class="range-selector" id="range-selector">
         <h2>Выберите диапазон чисел</h2>
-        <div style="display: flex; align-items: center; gap: 15px; margin-top: 15px;">
-          <label>От: <input type="number" id="min-range" value="1" min="1"></label>
-          <label>До: <input type="number" id="max-range" value="100" min="2"></label>
-        </div>
-      </div>
-
-      <div id="setup" style="display: block;">
-        <div class="chat-container">
-          <div id="messages">
-            <div class="message system-message">Выберите диапазон чисел и загадайте число</div>
-          </div>
-          <div class="input-area">
-            <input id="user-secret" placeholder="Введите загаданное число" type="number">
-            <button id="start-button" class="btn">Начать игру</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="game" style="display:none;">
-        <div class="chat-container">
-          <div id="messages-game"></div>
-          <div class="input-area">
-            <input id="answer" placeholder="да / нет">
-            <button id="send-button" class="btn">Ответить</button>
-          </div>
+        <select id="range-select">
+          <option value="0_100">0 — 100</option>
+          <option value="-100_100">-100 — 100</option>
+          <option value="-1000_1000">-1000 — 1000</option>
+          <option value="custom">Свой диапазон</option>
+        </select>
+        
+        <div id="custom-range" style="display: none; margin-top: 10px;">
+          От: <input type="number" id="custom-min" style="width: 80px;">
+          До: <input type="number" id="custom-max" style="width: 80px;">
         </div>
         
-        <div id="status">
-          <p id="secret-number" style="font-weight:bold;"></p>
-          <div id="result-banner-container"></div>
+        <button onclick="selectRange()" class="btn" style="margin-top: 10px;">Выбрать</button>
+      </div>
+
+      <div id="game-setup" style="display: none;">
+        <div class="info-panel">
+          <div class="info-header" onclick="toggleInfo()">
+            <h2>Как играть</h2>
+            <span id="toggle-icon">▼</span>
+          </div>
+          <div class="info-content" id="info-content">
+            <p>1. Загадайте число в выбранном диапазоне</p>
+            <p>2. Отвечайте на вопросы компьютера "да" или "нет"</p>
+            <p>3. Компьютер попытается угадать ваше число</p>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+          <input type="number" id="user-secret" placeholder="Введите загаданное число">
+          <button onclick="startGame()" class="btn">Начать игру</button>
+        </div>
+      </div>
+
+      <div class="chat-container" id="game-area" style="display: none;">
+        <div id="messages">
+          <div class="message system-message">Нажмите "Начать игру", чтобы начать</div>
+        </div>
+        <div class="chat-input">
+          <input id="answer" placeholder="да / нет" disabled>
+          <button onclick="processAnswer()" class="btn" disabled>Отправить</button>
         </div>
       </div>
 
       <div style="margin-top: 20px; text-align: center;">
-        <button onclick="exitGame()" class="btn">Выйти из игры</button>
+        <a href="/mode_selection" class="btn">Выйти в меню</a>
       </div>
     </div>
   </div>
 
-  <script src="{{ url_for('static', filename='game_mode_1_2.js') }}"></script>
+  <script src="/static/questionPool.js"></script>
   <script>
-    // Переопределяем глобальные переменные диапазона
-    document.getElementById('start-button').onclick = function() {
-      const minRange = parseInt(document.getElementById('min-range').value);
-      const maxRange = parseInt(document.getElementById('max-range').value);
+    let minRange = 0;
+    let maxRange = 100;
+    let gameId = null;
+
+    function toggleInfo() {
+      const content = document.getElementById('info-content');
+      const icon = document.getElementById('toggle-icon');
+      if (content.style.display === 'none') {
+        content.style.display = 'block';
+        icon.textContent = '▼';
+      } else {
+        content.style.display = 'none';
+        icon.textContent = '▶';
+      }
+    }
+
+    function selectRange() {
+      const rangeSelect = document.getElementById('range-select');
+      const customRange = document.getElementById('custom-range');
       
-      if (minRange >= maxRange) {
-        alert('Максимальное число должно быть больше минимального');
+      if (rangeSelect.value === 'custom') {
+        minRange = parseInt(document.getElementById('custom-min').value);
+        maxRange = parseInt(document.getElementById('custom-max').value);
+        
+        if (isNaN(minRange) || isNaN(maxRange) || minRange >= maxRange) {
+          alert('Пожалуйста, введите корректный диапазон');
+          return;
+        }
+      } else {
+        [minRange, maxRange] = rangeSelect.value.split('_').map(Number);
+      }
+      
+      document.getElementById('range-selector').style.display = 'none';
+      document.getElementById('game-setup').style.display = 'block';
+      
+      // Обновляем подсказку с выбранным диапазоном
+      const infoContent = document.getElementById('info-content');
+      infoContent.innerHTML = `
+        <p>Выбран диапазон: от ${minRange} до ${maxRange}</p>
+        <p>1. Загадайте число в этом диапазоне</p>
+        <p>2. Отвечайте на вопросы компьютера "да" или "нет"</p>
+        <p>3. Компьютер попытается угадать ваше число</p>
+      `;
+    }
+
+    // Обработчик изменения выбора диапазона
+    document.getElementById('range-select').addEventListener('change', function() {
+      const customRange = document.getElementById('custom-range');
+      customRange.style.display = this.value === 'custom' ? 'block' : 'none';
+    });
+
+    function appendToChat(sender, text) {
+      const messages = document.getElementById('messages');
+      const div = document.createElement('div');
+      div.className = sender === 'Вы' ? 'message user-message' : 'message system-message';
+      div.innerHTML = `<strong>${sender}:</strong> ${text}`;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function startGame() {
+      const secret = parseInt(document.getElementById('user-secret').value);
+      
+      if (isNaN(secret) || secret < minRange || secret > maxRange) {
+        alert(`Пожалуйста, введите число от ${minRange} до ${maxRange}`);
         return;
       }
       
-      window.minRange = minRange;
-      window.maxRange = maxRange;
+      document.getElementById('game-setup').style.display = 'none';
+      document.getElementById('game-area').style.display = 'block';
+      document.getElementById('answer').disabled = false;
+      document.querySelector('.chat-input button').disabled = false;
       
-      // Показываем текущий диапазон в поле ввода
-      const secretInput = document.getElementById('user-secret');
-      secretInput.min = minRange;
-      secretInput.max = maxRange;
-      secretInput.placeholder = `Введите число от ${minRange} до ${maxRange}`;
-      
-      // Вызываем оригинальную функцию startGame
-      startGame();
-    };
-    
-    function exitGame() {
-      window.location.href = '/mode_selection';
+      fetch('/start_game_1_2', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          secret: secret, 
+          min_range: minRange, 
+          max_range: maxRange 
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+        
+        gameId = data.game_id;
+        document.getElementById('messages').innerHTML = '';
+        appendToChat('Система', `Я буду угадывать число от ${minRange} до ${maxRange}.`);
+        appendToChat('Система', data.question);
+      });
     }
+
+    function processAnswer() {
+      const answerInput = document.getElementById('answer');
+      const answer = answerInput.value.trim().toLowerCase();
+
+      if (answer !== 'да' && answer !== 'нет') {
+        alert('Пожалуйста, введите "да" или "нет"');
+        return;
+      }
+
+      appendToChat('Вы', answer);
+      answerInput.value = '';
+
+      fetch('/answer_1_2', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ game_id: gameId, answer })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+
+        appendToChat('Система', data.response);
+
+        if (data.done) {
+          document.getElementById('answer').disabled = true;
+          document.querySelector('.chat-input button').disabled = true;
+        }
+      });
+    }
+
+    // Инициализация - скрываем информационное окно при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('info-content').style.display = 'none';
+      document.getElementById('toggle-icon').textContent = '▶';
+    });
   </script>
 </body>
 </html>

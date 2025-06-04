@@ -6,13 +6,10 @@ document.getElementById('min-range-setup').textContent = minRange;
 document.getElementById('max-range-setup').textContent = maxRange;
 
 document.getElementById('start-button').onclick = startGame;
-document.getElementById('send-button').addEventListener('click', processAnswer);
+
 
 function startGame() {
   const secret = Number(document.getElementById('user-secret').value);
-  const minRange = window.minRange || 1;
-  const maxRange = window.maxRange || 100;
-  
   if (isNaN(secret) || secret < minRange || secret > maxRange) {
     alert(`Введите число от ${minRange} до ${maxRange}`);
     return;
@@ -32,10 +29,10 @@ function startGame() {
         return;
       }
       gameId = data.game_id;
-      
+	  
       document.getElementById('setup').style.display = 'none';
-      document.getElementById('game').style.display = 'block';
-      
+	  document.getElementById('game').style.display = 'block';
+	  
       appendToChat("Компьютер", data.question);
     });
 }
