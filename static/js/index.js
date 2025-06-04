@@ -16,18 +16,18 @@ startBtn.addEventListener('click', () => {
     alert('Пожалуйста, выберите длину от 4 до 7.');
     return;
   }
+  
+  lengthInput.disabled = true;
 
   secretNumber = generateSecretNumber(numberLength);
   console.log('Загаданное число:', secretNumber); // для отладки, можно убрать
 
-  historyList.innerHTML = '';
-  guessDisplay.innerHTML = '';
+  document.getElementById('guessDisplayTable').innerHTML = '';
   guessInput.value = '';
   guessInput.maxLength = numberLength;
   guessInput.placeholder = `Введите ${numberLength}-значное число`;
   gameArea.classList.remove('hidden');
-
-
+  document.getElementById('guessSection').classList.remove('hidden');
 });
 
 submitBtn.addEventListener('click', () => {
@@ -63,7 +63,10 @@ function generateSecretNumber(length) {
 }
 
 function displayGuess(guess) {
-  guessDisplay.innerHTML = '';
+  const table = document.getElementById('guessDisplayTable');
+  const row = document.createElement('div');
+  row.className = 'guess-history-row';
+
   const secretArr = secretNumber.split('');
   const guessArr = guess.split('');
   const usedInSecret = new Array(secretArr.length).fill(false);
@@ -73,13 +76,13 @@ function displayGuess(guess) {
   for (let i = 0; i < guessArr.length; i++) {
     if (guessArr[i] === secretArr[i]) {
       correctPositions[i] = true;
-      usedInSecret[i] = true; // Отметим, что эта цифра использована
+      usedInSecret[i] = true;
     }
   }
 
   for (let i = 0; i < guessArr.length; i++) {
     const cell = document.createElement('div');
-    cell.className = 'number-cell';
+    cell.className = 'guess-history-cell';
 
     if (correctPositions[i]) {
       cell.classList.add('correct');
@@ -87,18 +90,19 @@ function displayGuess(guess) {
       // Проверяем, есть ли цифра в secretNumber на другой позиции
       for (let j = 0; j < secretArr.length; j++) {
         if (!usedInSecret[j] && guessArr[i] === secretArr[j]) {
-          cell.classList.add('yellow'); // Добавляем желтую подсветку
-          usedInSecret[j] = true; // Помечаем цифру как использованную
+          cell.classList.add('yellow');
+          usedInSecret[j] = true;
           break;
         }
       }
     }
 
     cell.textContent = guessArr[i];
-    guessDisplay.appendChild(cell);
+    row.appendChild(cell);
   }
-}
 
+  table.appendChild(row);
+}
 
 function addGuessToHistory(guess) {
   const li = document.createElement('li');
