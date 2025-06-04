@@ -246,6 +246,7 @@ socket.on('wordly_game_over', (data) => {
   document.querySelectorAll('.game-section').forEach(section => {
 	  section.classList.add('hidden');
   });
+  document.querySelector('.room-code-display').classList.add('hidden');
   guessSection.classList.add('hidden');
   evaluationSection.classList.add('hidden');
   gameInfo.classList.add('hidden');

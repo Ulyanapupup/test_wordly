@@ -47,7 +47,7 @@
       width: 48%;
       padding: 20px;
       border-radius: 12px;
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: #FFF8E1; /* Светло-желтый фон */
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     
@@ -72,7 +72,7 @@
     #gameInfo {
       margin-top: 20px;
       padding: 15px;
-      background: rgba(255, 255, 255, 0.1);
+      background: #FFF8E1; /* Светло-желтый фон */
       border-radius: 8px;
     }
     
@@ -101,6 +101,8 @@
       font-size: 18px;
       border-radius: 8px;
       margin-left: 10px;
+      max-width: 120px; /* Уменьшенная ширина */
+      display: inline-block;
     }
     
     .hidden {
@@ -111,6 +113,16 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+      margin-top: 15px; /* Отступ сверху */
+      margin-bottom: 15px; /* Отступ снизу */
+    }
+
+    #guessResults {
+      margin-top: 20px; /* Отступ для заголовка "История догадок" */
+    }
+
+    #evaluationSection {
+      margin-bottom: 20px; /* Отступ после зоны оценки */
     }
 
     /* Адаптивные стили */
@@ -172,6 +184,11 @@
         font-size: 16px;
         padding: 10px;
       }
+
+      #wordLength {
+        font-size: 16px;
+        max-width: 100px;
+      }
     }
 
     @media (max-width: 600px) {
@@ -181,12 +198,14 @@
 
       #lobby {
         width: 100%;
-        padding: 10px;
+        padding: 15px;
       }
 
       #wordLength {
         font-size: 16px;
         padding: 6px;
+        max-width: 80px;
+        margin-left: 5px;
       }
 
       .btn {
@@ -196,6 +215,10 @@
 
       #roomIdInput {
         max-width: 100%;
+      }
+
+      .game-section, .resultsSection {
+        padding: 15px;
       }
     }
   </style>
@@ -231,7 +254,7 @@
       
       <div id="game" class="hidden">
         <button id="leaveGame" class="btn">Покинуть игру</button>
-        <p id="roomCodeDisplay" style="font-weight:bold; margin-top:10px; text-align: center;">
+        <p id="roomCodeDisplay" style="font-weight:bold; margin-top:10px; text-align: center;" class="room-code-display">
           Код комнаты: <span id="roomCode"></span>
         </p>
         
