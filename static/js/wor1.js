@@ -13,7 +13,7 @@ let attempts = 0;
 let dictionary = [];
 
 // Загрузка словаря из words.json
-fetch('/static/wordly_words.json')
+fetch('/static/wor.json')
     .then(response => response.json())
     .then(data => {
         dictionary = data;

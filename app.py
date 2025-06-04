@@ -77,7 +77,7 @@ def game_mode_1_2():
     
     @app.route('/game/wordly/single')
 def game_wordly_single():
-    return render_template('game_mode_wordly_single.html')
+    return render_template('wor1.html')
 
 # Запуск игры 1.2 — создание новой игры
 @app.route('/start_game_1_2', methods=['POST'])
