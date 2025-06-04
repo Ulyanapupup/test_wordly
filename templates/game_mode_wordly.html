@@ -55,7 +55,7 @@
       display: flex;
       margin-bottom: 10px;
       gap: 5px;
-      justify-content: center;
+      justify-content: flex-start;
     }
     
     #guessInput, #secretWord {
@@ -106,6 +106,98 @@
     .hidden {
       display: none;
     }
+
+    #guessHistory {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    /* Адаптивные стили */
+    @media (max-width: 1250px) {
+      .game-section, .resultsSection {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+
+      .game-container {
+        flex-direction: column;
+      }
+
+      #guessInput, #secretWord {
+        font-size: 18px;
+        padding: 10px;
+      }
+
+      .letter {
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+      }
+
+      .game-title {
+        margin-top: 10px;
+      }
+
+      #lobby {
+        padding: 15px;
+      }
+
+      #guessInput, #secretWord {
+        font-size: 16px;
+        padding: 8px;
+      }
+
+      .letter {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+      }
+
+      .btn {
+        padding: 10px 15px;
+        font-size: 16px;
+      }
+
+      #roomIdInput {
+        font-size: 16px;
+        padding: 10px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        width: 95%;
+      }
+
+      #lobby {
+        width: 100%;
+        padding: 10px;
+      }
+
+      #wordLength {
+        font-size: 16px;
+        padding: 6px;
+      }
+
+      .btn {
+        width: 100%;
+        margin: 5px 0;
+      }
+
+      #roomIdInput {
+        max-width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -153,7 +245,6 @@
             </div>
             
             <div id="gameInfo" class="hidden">
-              <h3>Информация</h3>
               <p>Ваше слово: <span id="myWord"></span></p>
             </div>
 
