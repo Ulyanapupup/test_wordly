@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Угадывающий (2.2)</title>
+  <style>
+    body {
+      display: flex;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+    }
+
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #ccc;
+      padding: 10px;
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      background: #f9f9f9;
+      padding: 10px;
+      border: 1px solid #ddd;
+      margin-bottom: 10px;
+    }
+
+    .message {
+      margin-bottom: 8px;
+    }
+
+    .input-area {
+      display: flex;
+    }
+
+    .input-area input {
+      flex: 1;
+      padding: 8px;
+      font-size: 16px;
+    }
+
+    .input-area button {
+      padding: 8px 12px;
+      font-size: 16px;
+    }
+
+    .panel {
+      width: 300px;
+      padding: 10px;
+      background-color: #f0f4f7;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .number-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .number {
+      width: 40px;
+      height: 30px;
+      text-align: center;
+      line-height: 30px;
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    .number.dimmed {
+      background-color: #eee;
+      color: #aaa;
+      text-decoration: line-through;
+      cursor: not-allowed;
+    }
+
+    .secret-input {
+      margin-top: 10px;
+    }
+
+    .pagination {
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="messages" id="messages"></div>
+    <div class="input-area">
+      <input type="text" id="chat-input" placeholder="Задай вопрос...">
+      <button onclick="sendMessage()">Отправить</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Ты — Угадывающий</h3>
+    
+    <div class="secret-input">
+      <p>Загадай число от -100 до 100:</p>
+	  <input type="number" id="secret-number" value="0" min="-100" max="100">
+      <button onclick="confirmNumber()">Подтвердить</button>
+      <p id="status"></p>
+    </div>
+
+    <div>
+      <h4>Числа загадывающего:</h4>
+      <div id="number-grid" class="number-grid"></div>
+      <div class="pagination">
+        <button onclick="prevPage()">◀</button>
+        <span id="page-number">1</span>
+        <button onclick="nextPage()">▶</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script>
+    const messagesDiv = document.getElementById("messages");
+    const chatInput = document.getElementById("chat-input");
+    const statusP = document.getElementById("status");
+    const numberGrid = document.getElementById("number-grid");
+    const pageSpan = document.getElementById("page-number");
+
+    let currentPage = 0;
+    let dimmedNumbers = new Set();
+    let secret = null;
+
+    function confirmNumber() {
+      const num = parseInt(document.getElementById("secret-number").value);
+      if (num >= -100 && num <= 100) {
+        secret = num;
+        statusP.textContent = `Вы загадали: ${secret}`;
+        socket.emit("reply_logic_2_2", {
+          room: room,
+          session_id: sessionId,
+          secret: secret
+        });
+      } else {
+        alert("Введите число в диапазоне -100 до 100");
+      }
+    }
+
+    function renderNumbers() {
+		numberGrid.innerHTML = "";
+		const numbers = Array.from({ length: 201 }, (_, i) => i - 100); // от -100 до 100
+		
+		for (const num of numbers) {
+			const el = document.createElement("div");
+			el.className = "number";
+			if (dimmedNumbers.has(num)) {
+				el.classList.add("dimmed");
+			}
+			el.textContent = num;
+			numberGrid.appendChild(el);
+		}
+	}
+
+    function nextPage() {
+      if (currentPage < 1) {
+        currentPage++;
+        renderNumbers();
+      }
+    }
+
+    function prevPage() {
+      if (currentPage > 0) {
+        currentPage--;
+        renderNumbers();
+      }
+    }
+
+    // --- Socket.IO ---
+    const socket = io();
+    const sessionId = "{{ session['session_id'] }}";
+    const room = "{{ room }}";
+    const role = "guesser";
+    
+    socket.emit("join_game_room_2_2", {
+      room: room,
+      session_id: sessionId
+    });
+
+    function sendMessage() {
+      const msg = chatInput.value.trim();
+      if (!msg) return;
+
+      socket.emit("chat_message", {
+        room: room,
+        session_id: sessionId,
+        message: msg
+      });
+
+      addMessage("Вы", msg);
+      
+      if (msg.match(/больше|меньше|это число/i)) {
+        socket.emit("guess_logic_2_2", {
+          room: room,
+          session_id: sessionId,
+          message: msg
+        });
+      }
+      
+      chatInput.value = "";
+    }
+
+    function addMessage(sender, text) {
+      const div = document.createElement("div");
+      div.className = "message";
+      div.textContent = `${sender}: ${text}`;
+      messagesDiv.appendChild(div);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    socket.on("chat_message", function (data) {
+      if (data.sender !== "Вы") {
+        addMessage(data.sender, data.message);
+      }
+    });
+
+    socket.on('filter_numbers_2_2', (data) => {
+		console.log("Received filter_numbers_2_2:", data);
+		if (data.target === role) {
+			data.dim.forEach(num => dimmedNumbers.add(num));
+			renderNumbers();
+		}
+	});
+    
+    socket.on('guess_result_2_2', (data) => {
+      if (data.target === role) {
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = 0;
+        overlay.style.left = 0;
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.background = 'rgba(0,0,0,0.8)';
+        overlay.style.color = 'white';
+        overlay.style.fontSize = '32px';
+        overlay.style.display = 'flex';
+        overlay.style.justifyContent = 'center';
+        overlay.style.alignItems = 'center';
+        overlay.style.zIndex = 1000;
+        overlay.innerText = data.correct
+          ? `✅ Они угадали ваше число ${data.value}!`
+          : `❌ Это не ваше число ${data.value}`;
+        document.body.appendChild(overlay);
+        setTimeout(() => overlay.remove(), 3000);
+      }
+    });
+
+    chatInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") sendMessage();
+    });
+
+    // Initial render
+    renderNumbers();
+</script>
+</body>
+</html>
