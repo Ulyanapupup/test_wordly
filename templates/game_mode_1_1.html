@@ -3,9 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Режим {{ mode }}</title>
+  <title>Угадай число</title>
   <link rel="stylesheet" href="index.css">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300..900&display=swap');
+    body {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 500;
+    }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+    *{
+      padding: 0;
+      margin: 0;
+    }
+    .container{
+      width: 85%;
+      margin: 0 auto;
+    }
+    .fon{
+    background: linear-gradient(180deg,rgba(184, 113, 35, 1) 0%, rgba(26, 14, 1, 1) 100%);
+    min-height: 100vh
+    }
+    header {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .logo-block {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .logo-img {
+        width: 50px;
+        height: auto;
+    }
+
+    .site-title {
+        font-size: 32px;
+        color: rgb(0, 0, 0);
+    }
+    .btn {
+    background: #D59336;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 25px;
+    color: white;
+    text-decoration: none;
+    transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+        background: #8a520e;
+    }
     /* Дополнительные стили для чата и подсказок */
     .chat-container {
       width: 100%;
@@ -53,6 +111,7 @@
       padding: 12px;
       border: 2px solid #ccc;
       border-radius: 8px;
+      margin-top: 10px;
       margin-bottom: 10px;
       font-size: 18px;
     }
@@ -77,12 +136,11 @@
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
-      margin-bottom: 10px;
     }
     
     .info-content {
       border-top: 1px solid #eee;
-      padding-top: 10px;
+      padding: 15px;
       font-size: 18px;
     }
     
@@ -90,19 +148,19 @@
       margin-bottom: 10px;
       padding: 8px 12px;
       border-radius: 18px;
-      max-width: 70%;
+      max-width: 40%;
       word-wrap: break-word;
       font-size: 18px;
     }
     
     .user-message {
-      background-color: #e3f2fd;
+      background-color: #D59336;
       margin-left: auto;
       border-bottom-right-radius: 0;
     }
     
     .system-message {
-      background-color: #f1f1f1;
+      background-color: #D59336;
       margin-right: auto;
       border-bottom-left-radius: 0;
     }
@@ -111,7 +169,10 @@
       font-size: 14px;
       color: #666;
       text-align: center;
-      margin-top: 10px;
+      padding: 20px;
+    }
+    @media (max-width: 1250px) {
+        .message {max-width: 70%;}
     }
   </style>
 </head>
@@ -123,13 +184,11 @@
           <img src="image/logo.svg" alt="Логотип" class="logo-img" />
           <h1 class="site-title">Logic Duel</h1>
         </div>
-        <h1 class="game-title">Режим {{ mode }}</h1>
+        <h1 class="game-title">Угадай число</h1>
       </header>
-
       <div style="text-align: center; margin-top: 20px;">
         <button onclick="startGame()" class="btn">Начать игру</button>
       </div>
-
       <div class="info-panel">
         <div class="info-header" onclick="toggleInfo()">
           <h2>Подсказки</h2>
@@ -151,29 +210,28 @@
           <p>Система будет отвечать "да" или "нет".</p>
         </div>
       </div>
-
-      <div class="chat-container">
-        <div id="messages">
-          <div class="message system-message">Нажмите "Начать игру", чтобы начать</div>
+        <div class="chat-container">
+          <div id="messages">
+            <div class="message system-message">Нажмите "Начать игру", чтобы начать</div>
+          </div>
+          <div class="chat-input">
+            <input id="question" placeholder="Введите вопрос..." disabled>
+            <button onclick="ask()" class="btn" disabled>Отправить</button>
+          </div>
         </div>
-        <div class="chat-input">
-          <input id="question" placeholder="Введите вопрос..." disabled>
-          <button onclick="ask()" class="btn" disabled>Отправить</button>
+
+        <div class="guess-area">
+          <h2>Попробуйте угадать число</h2>
+          <input id="guess" placeholder="Введите число..." disabled>
+          <button onclick="checkGuess()" class="btn" disabled>Проверить</button>
+          <p id="guess-result"></p>
         </div>
-      </div>
 
-      <div class="guess-area">
-        <h2>Попробуйте угадать число</h2>
-        <input id="guess" placeholder="Введите число..." disabled>
-        <button onclick="checkGuess()" class="btn" disabled>Проверить</button>
-        <p id="guess-result"></p>
-      </div>
+        <div style="margin-top: 20px; text-align: center;">
+          <a href="/mode_selection" class="btn">Выйти в меню</a>
+        </div>
 
-      <div style="margin-top: 20px; text-align: center;">
-        <a href="/mode_selection" class="btn">Выйти в меню</a>
-      </div>
-
-      <div id="debug-info">Загаданное число: <span id="secret-number-display">не выбрано</span></div>
+        <div id="debug-info">Загаданное число: <span id="secret-number-display">не выбрано</span></div>
     </div>
   </div>
 
