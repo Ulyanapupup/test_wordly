@@ -4,8 +4,66 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Режим 1.2 - Компьютер угадывает</title>
-  <link rel="stylesheet" href="/static/index.css">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300..900&display=swap');
+    body {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 500;
+    }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+    *{
+      padding: 0;
+      margin: 0;
+    }
+    .container{
+      width: 85%;
+      margin: 0 auto;
+    }
+    .fon{
+    background: linear-gradient(180deg,rgba(184, 113, 35, 1) 0%, rgba(26, 14, 1, 1) 100%);
+    min-height: 100vh
+    }
+    header {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .logo-block {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .logo-img {
+        width: 50px;
+        height: auto;
+    }
+
+    .site-title {
+        font-size: 32px;
+        color: rgb(0, 0, 0);
+    }
+    .btn {
+    background: #D59336;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 25px;
+    color: white;
+    text-decoration: none;
+    transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+        background: #8a520e;
+    }
+    
     .chat-container {
       width: 100%;
       background: white;
@@ -29,10 +87,12 @@
       display: flex;
       gap: 10px;
       margin-top: 10px;
+      flex-wrap: wrap;
     }
     
     #answer {
       flex: 1;
+      min-width: 200px;
       padding: 12px;
       border: 2px solid #ccc;
       border-radius: 8px;
@@ -45,27 +105,6 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       padding: 20px;
       margin-top: 20px;
-    }
-    
-    .message {
-      margin-bottom: 10px;
-      padding: 8px 12px;
-      border-radius: 18px;
-      max-width: 70%;
-      word-wrap: break-word;
-      font-size: 18px;
-    }
-    
-    .user-message {
-      background-color: #e3f2fd;
-      margin-left: auto;
-      border-bottom-right-radius: 0;
-    }
-    
-    .system-message {
-      background-color: #f1f1f1;
-      margin-right: auto;
-      border-bottom-left-radius: 0;
     }
     
     .range-selector {
@@ -103,6 +142,46 @@
       padding: 10px;
       font-size: 16px;
       margin: 5px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+    }
+    
+    .message {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 18px;
+      max-width: 70%;
+      word-wrap: break-word;
+      font-size: 18px;
+    }
+    
+    .user-message {
+      background-color: #D59336;
+      margin-left: auto;
+      border-bottom-right-radius: 0;
+      color: white;
+    }
+    
+    .system-message {
+      background-color: #f1f1f1;
+      margin-right: auto;
+      border-bottom-left-radius: 0;
+    }
+
+    @media (max-width: 900px) {
+      .chat-input {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .chat-input input#answer {
+        width: 100%;
+      }
+
+      .chat-input button.btn {
+        width: 100%;
+        text-align: center;
+      }
     }
   </style>
 </head>

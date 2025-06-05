@@ -189,6 +189,7 @@
       color: #666;
       text-align: center;
       padding: 20px;
+	  display: none;
 	  
     }
     @media (max-width: 1250px) {
@@ -235,15 +236,14 @@
         <div class="info-content" id="info-content">
           <p>Вы можете задавать вопросы, например:</p>
           <ul>
-            <li>Это число больше 50?</li>
-            <li>Число четное?</li>
-            <li>Оно делится на 3?</li>
-            <li>Это простое число?</li>
-            <li>Число положительное?</li>
-            <li>Число однозначное?</li>
-            <li>Число двузначное?</li>
-            <li>Число является степенью другого числа?</li>
-            <li>Сумма цифр числа больше 5?</li>
+            <li>Это число больше/меньше x</li>
+            <li>Число четное</li>
+            <li>Оно кратно x</li>
+            <li>Это простое число</li>
+            <li>Число положительное</li>
+            <li>Число одно/двузначное</li>
+            <li>Число является степенью другого числа</li>
+            <li>Сумма цифр числа больше x</li>
           </ul>
           <p>Система будет отвечать "да" или "нет".</p>
         </div>
@@ -268,7 +268,7 @@
         </div>
 
         <div style="margin-top: 20px; text-align: center;">
-          <a href="/mode_selection" class="btn">Выйти в меню</a>
+          <a href="/mode_selection" class="btn">Выйти</a>
         </div>
 
 		<div id="debug-info">Загаданное число: <span id="secret-number-display">не выбрано</span></div>
