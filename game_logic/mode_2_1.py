@@ -14,8 +14,7 @@ class Game2_1:
         msg = message.lower()
         self.pending_check = None
         self.last_guess = None
-
-        # Улучшенное распознавание вопросов
+        
         if m := re.search(r"(число\s*)?больше\s*(-?\d+)", msg):
             self.pending_check = {'type': '>', 'value': int(m.group(2))}
         elif m := re.search(r"(число\s*)?меньше\s*(-?\d+)", msg):
@@ -30,8 +29,11 @@ class Game2_1:
             self.pending_check = {'type': 'even'}
         elif m := re.search(r"число\s*делится\s*на\s*(-?\d+)", msg):
             self.pending_check = {'type': 'divisible', 'value': int(m.group(1))}
-        elif m := re.search(r"сумма\s*цифр\s*числа\s*больше\s*(-?\d+)", msg):
-            self.pending_check = {'type': 'sum_gt', 'value': int(m.group(1))}
+        elif m := re.search(r"сумма\s*цифр\s*числа\s*(больше|меньше)\s*(-?\d+)", msg):
+            if m.group(1) == "больше":
+                self.pending_check = {'type': 'sum_gt', 'value': int(m.group(2))}
+            else:
+                self.pending_check = {'type': 'sum_lt', 'value': int(m.group(2))}
         elif re.search(r"число\s*является\s*степенью\s*другого\s*числа", msg):
             self.pending_check = {'type': 'is_power'}
 
@@ -73,6 +75,13 @@ class Game2_1:
                     return {'dim': [n for n in range(-1000, 1001) if sum_digits(n) <= v]}
                 else:
                     return {'dim': [n for n in range(-1000, 1001) if sum_digits(n) > v]}
+            elif t == 'sum_lt':
+                def sum_digits(x):
+                    return sum(int(d) for d in str(abs(x)))
+                if answer == 'да':
+                    return {'dim': [n for n in range(-1000, 1001) if sum_digits(n) >= v]}
+                else:
+                    return {'dim': [n for n in range(-1000, 1001) if sum_digits(n) < v]}
             elif t == 'is_power':
                 def is_power_number(x):
                     if x in (0, 1): return True
