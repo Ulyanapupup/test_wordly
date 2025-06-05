@@ -333,16 +333,16 @@
 
     @media (max-width: 400px) {
       h1 {
-        font-size: 1.4em;
+        font-size: 1.5em;
       }
       h2 {
-        font-size: 1.2em;
+        font-size: 1.3em;
       }
       h3 {
-        font-size: 1em;
+        font-size: 1.2em;
       }
       p, label {
-        font-size: 0.85em;
+        font-size: 0.9em;
       }
 
       .letter {
@@ -356,6 +356,26 @@
         font-size: 13px;
         padding: 8px 12px;
       }
+	  
+	  #resultsSection .game-section {
+	  width: 100%;
+	  padding: 20px;
+	  border-radius: 12px;
+	  background-color: #fff8e15e;
+	  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	  margin-bottom: 20px;
+	}
+
+	@media (max-width: 600px) {
+	  #resultsSection .game-section {
+		padding: 15px;
+	  }
+	  #resultsSection p {
+		font-size: 16px;
+	  }
+	  #resultStatus {
+		font-size: 18px !important;
+	  }
     }
   </style>
 </head>
@@ -428,11 +448,21 @@
           </div>
           
           <div id="resultsSection" class="hidden">
-            <h2>Итоги</h2>
-            <p>Ваше слово: <span id="resultMyWord"></span></p>
-            <p>Слово соперника: <span id="resultOpponentWord"></span></p>
-            <p id="resultStatus" style="font-weight:bold; font-size:1.2em;"></p>
-          </div>
+			  <div class="game-section" style="margin: 0 auto; max-width: 600px;">
+				<h2 style="text-align: center;">Итоги игры</h2>
+				<div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+				  <div style="margin-bottom: 15px;">
+					<p style="font-weight: bold;">Ваше слово:</p>
+					<p id="resultMyWord" style="font-size: 18px; text-align: center;"></p>
+				  </div>
+				  <div style="margin-bottom: 15px;">
+					<p style="font-weight: bold;">Слово соперника:</p>
+					<p id="resultOpponentWord" style="font-size: 18px; text-align: center;"></p>
+				  </div>
+				  <p id="resultStatus" style="text-align: center; font-size: 20px; font-weight: bold; margin-top: 20px;"></p>
+				</div>
+			  </div>
+			</div>
         </div>
         <div id="gameStatus" style="text-align: center; margin-top: 20px;"></div>
       </div>

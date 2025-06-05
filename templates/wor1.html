@@ -10,7 +10,7 @@
 <div class="fon">
         <header>
             <div class="logo-block">
-                <img src="image/logo.svg" alt="Логотип"/> <!-- нужно путь нормальный указать -->
+                <img src="{{ url_for('static', filename='image/logo.svg') }}" alt="logo-img"/>
                 <h1 class="site-title">Logic Duel</h1>
             </div>
             <h1 class="game-title">Wordly</h1>

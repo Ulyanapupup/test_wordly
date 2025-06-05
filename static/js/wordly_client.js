@@ -251,7 +251,7 @@ socket.on('wordly_force_leave', () => {
 });
 
 socket.on('wordly_opponent_guess', (data) => {
-  gameStatus.textContent = 'Evaluate opponent\'s guess.';
+  gameStatus.textContent = 'Оцените предположение соперника';
   guessSection.classList.add('hidden');
   evaluationSection.classList.remove('hidden');
   setupEvaluation(data.guess);
