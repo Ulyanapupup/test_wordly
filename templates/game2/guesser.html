@@ -99,7 +99,7 @@
   </div>
 
   <div class="number-panel">
-    <h3>Диапазон: -1000 до 1000</h3>
+    <h3>Диапазон: 0 до 1000</h3>
     <div id="number-grid" class="number-grid"></div>
     <div class="pagination">
       <button onclick="prevPage()">◀</button>
@@ -184,14 +184,13 @@
 		addMessage("Вы", msg);
 		
 		// Если это специальный вопрос - отправляем на обработку
-		if (msg.match(/больше|меньше|это число|равно|положительное|отрицательное|чётное|четное|делится|сумма цифр|степень/i)) {
+		if (msg.match(/больше|меньше|это число|равно|степень/i)) {
 			socket.emit("guess_logic", {
 				room: room,
 				session_id: sessionId,
 				message: msg
 			});
 		}
-		
 		chatInput.value = "";
 	}
 
