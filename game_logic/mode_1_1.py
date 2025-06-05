@@ -94,9 +94,9 @@ def process_question(q):
     # Специальный случай: сумма цифр
     if "сумма цифр" in q:
         nums = re.findall(r'-?\s*\d+', q)
-        num = int(nums[0].replace(" ", ""))
         if not nums:
-            return "Пожалуйста, укажите число для сравнения"
+            return "Пожалуйста, укажите число"
+        num = int(nums[0].replace(" ", ""))
         x = int(nums[0])
         if "больше" in q:
             return "Да" if sum_of_digits_greater(x, secret_number) else "Нет"
@@ -115,10 +115,10 @@ def process_question(q):
                 return "Да" if func(None, secret_number) else "Нет"
 
             # Вопрос с числом
-            nums = re.findall(r'-?\d+', q)
+            nums = re.findall(r'-?\s*\d+', q)
             if not nums:
                 return "Пожалуйста, укажите число"
-            num = int(nums[0])
+            num = int(nums[0].replace(" ", ""))
             if num < min_range or num > max_range:
                 return f"Число должно быть в диапазоне от {min_range} до {max_range}"
 
