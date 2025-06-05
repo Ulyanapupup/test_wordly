@@ -25,7 +25,15 @@ socket.on('start_game', (data) => {
     // Переносим в нужный игровой режим для обоих игроков
     if (data.mode === '2.1') {
       window.location.href = `/game_mode_2_1?room=${roomCode}`;
+    } else if (data.mode === '2.2') {
+      window.location.href = `/game_mode_2_2?room=${roomCode}`;
     }
+  }
+});
+
+socket.on('start_game_2_2', (data) => {
+  if (data.room === roomCode) {
+    window.location.href = `/game_mode_2_2?room=${roomCode}`;
   }
 });
 
