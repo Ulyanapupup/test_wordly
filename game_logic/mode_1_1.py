@@ -93,7 +93,8 @@ def process_question(q):
 
     # Специальный случай: сумма цифр
     if "сумма цифр" in q:
-        nums = re.findall(r'-?\d+', q)
+        nums = re.findall(r'-?\s*\d+', q)
+        num = int(nums[0].replace(" ", ""))
         if not nums:
             return "Пожалуйста, укажите число для сравнения"
         x = int(nums[0])
