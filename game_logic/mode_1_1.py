@@ -97,8 +97,6 @@ def process_question(q):
         if not nums:
             return "Пожалуйста, укажите число"
         x = int(nums[0])
-        num = int(nums[0].replace(" ", ""))
-        x = int(nums[0])
         if "больше" in q:
             return "Да" if sum_of_digits_greater(x, secret_number) else "Нет"
         elif "меньше" in q:
