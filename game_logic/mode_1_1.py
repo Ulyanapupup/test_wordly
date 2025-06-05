@@ -121,6 +121,14 @@ def process_question(q):
             if x < min_range or x > max_range:
                 return f"Число должно быть в диапазоне от {min_range} до {max_range}"
 
+            # Специальная логика сравнения для отрицательных чисел
+            if func_name in ["is_greater", "is_less"] and secret_number < 0:
+                # Инвертируем знак и результат
+                adjusted_secret = abs(secret_number)
+                result = func(x, adjusted_secret)
+                return "Нет" if result else "Да"
+
             return "Да" if func(x, secret_number) else "Нет"
 
     return "Неизвестный вопрос"
+
