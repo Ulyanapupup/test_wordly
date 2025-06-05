@@ -7,9 +7,13 @@
     "положительное": "is_positive",
     "положительным": "is_positive",
     "делится": "is_divisible",
+	"кратно": "is_divisible",
     "четное": "is_even",
+	"четным": "is_even",
     "однозначное": "is_single_digit",
+	"однозначным": "is_single_digit",
     "двузначное": "is_double_digit",
+	"двузначным": "is_double_digit",
     "степенью": "is_power",
     "модуль": "is_absolute_power",
     "сумма цифр": "sum_of_digits_greater"
