@@ -406,17 +406,23 @@
 		  session_id: sessionId
 		});
 		
-		function sendMessage() {
-		  const msg = chatInput.value.trim();
-		  if (!msg) return;
-		  
-		  socket.on("chat_message", function (data) {
+		socket.on("chat_message", function (data) {
 			  if (data.sender === sessionId) {
 				addMessage("Вы", data.message);
 			  } else {
 				addMessage("Соперник", data.message);
 			  }
-			});
+		});
+		
+		function sendMessage() {
+		  const msg = chatInput.value.trim();
+		  if (!msg) return;
+		  
+		  socket.emit("chat_message", {
+			room: room,
+			session_id: sessionId,
+			message: msg
+		  });
 
 		  if (msg.match(/больше|меньше|это число/i)) {
 				socket.emit("guess_logic", {
