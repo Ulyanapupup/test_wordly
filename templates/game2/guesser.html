@@ -245,8 +245,8 @@
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      background: #af6c21;
-      color: white;
+      background: #ffefdd;
+      color: rgb(0, 0, 0);
       border: none;
       font-size: 20px;
       cursor: pointer;
@@ -298,7 +298,7 @@
           <h1 class="site-title">Logic Duel</h1>
           <h1 class="game-title">Угадай число</h1>
         </div>
-        <button class="help-btn" onclick="showHelp()">?</button>
+        <button class="help-btn" onclick="showHelp()">Подсказка</button>
       </header>
 
       <main>
@@ -327,16 +327,16 @@
   <!-- Всплывающее окно помощи -->
   <div id="help-overlay" class="help-overlay" style="display: none;">
     <div class="help-content">
-      <button class="close-help" onclick="hideHelp()">×</button>
-      <h3>Подсказка</h3>
-      <p>Вы можете задавать следующие вопросы:</p>
+      <button class="close-help" onclick="hideHelp()">Х</button>
+      <h3>Система может помочь вам:</h3>
+      <p>Она обрабатывает вопросы со следующими формулировками:</p>
       <ul>
-        <li>"Число больше 50?" - чтобы исключить числа меньше или равные 50</li>
-        <li>"Число меньше 100?" - чтобы исключить числа больше или равные 100</li>
-        <li>"Это число 42?" - чтобы проверить конкретное число</li>
-        <li>"Число является степенью другого числа?" - чтобы проверить, является ли число степенью (например, 8 = 2³)</li>
+        <li>"больше x"</li>
+        <li>"меньше x"</li>
+        <li>"Это число равно x"</li>
+        <li>"Число является степенью другого числа?"</li>
       </ul>
-      <p>Загадывающий может отвечать только "Да" или "Нет".</p>
+      <p>Если вы знаете ответ, обязательно напишите: "это число равно "</p>
     </div>
   </div>
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
