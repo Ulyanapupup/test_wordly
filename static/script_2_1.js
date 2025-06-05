@@ -9,7 +9,7 @@ let currentRoles = { guesser: null, creator: null };
 socket.emit('join_game_room', { room, session_id: sessionId });
 
 socket.on('redirect', (data) => {
-    console.log('Redirecting to:', data.url);  // Должно выводить /game2/guesser?room=ABC
+    console.log('Redirecting to:', data.url);
 	console.log("=== DEBUG REDIRECT ===", data.url);
     window.location.href = data.url;
 });
