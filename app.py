@@ -52,10 +52,6 @@ def mode_selection():
 def index_page():
     return render_template('index.html')
 
-@app.route('/index2')
-def index2_page():
-    return render_template('index2.html')
-
 @app.route('/room_setup')
 def room_setup():
     return render_template('room_setup.html')
@@ -464,6 +460,12 @@ def handle_reply_logic(data):
         
 
 # В app.py добавим новый обработчик сокетов для Wordly
+
+# Добавим маршрут для игры Wordly
+@app.route('/game/wordly')
+def game_wordly():
+    return render_template('game_mode_wordly.html')
+    
 @socketio.on('create_wordly_room')
 def handle_create_wordly_room(data):
     word_length = data.get('wordLength', 5)
@@ -480,7 +482,6 @@ def handle_create_wordly_room(data):
     join_room(room_id)
     emit('wordly_room_created', {'roomId': room_id, 'wordLength': word_length})
 
-@socketio.on('join_wordly_room')
 @socketio.on('join_wordly_room')
 def handle_join_wordly_room(data):
     room_id = data['roomId']
@@ -580,11 +581,6 @@ def handle_submit_wordly_evaluation(data):
 
 def generate_wordly_room_id():
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-
-# Добавим маршрут для игры Wordly
-@app.route('/game/wordly')
-def game_wordly():
-    return render_template('game_mode_wordly.html')
     
 # Добавим новый обработчик сокетов
 @socketio.on('leave_wordly_game')
@@ -615,9 +611,15 @@ def handle_leave_wordly_game(data):
 
 
 # В app.py добавим новый обработчик сокетов для Numbly
-@socketio.on('create_wordly_room')
+
+# Добавим маршрут для игры numbly
+@app.route('/game/numbly')
+def game_numbly():
+    return render_template('game_mode_numbly.html')
+    
+@socketio.on('create_numbly_room')
 def handle_create_numbly_room(data):
-    numb_length = data.get('numbLength', 5)
+    numb_length = data.get('numbLength', 4)
     room_id = generate_numbly_room_id()
     rooms[room_id] = {
         'players': [request.sid],
@@ -731,11 +733,6 @@ def handle_submit_numbly_evaluation(data):
 
 def generate_numbly_room_id():
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-
-# Добавим маршрут для игры numbly
-@app.route('/game/numbly')
-def game_numbly():
-    return render_template('game_mode_numbly.html')
     
 # Добавим новый обработчик сокетов
 @socketio.on('leave_numbly_game')
