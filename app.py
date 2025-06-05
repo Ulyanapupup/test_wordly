@@ -380,13 +380,14 @@ def handle_chat_message(data):
     sender_role = None
     if room in room_roles:
         if room_roles[room]['guesser'] == session_id:
-            sender_role = 'Угадывающий'
+            sender_role = 'guesser'
         elif room_roles[room]['creator'] == session_id:
-            sender_role = 'Загадывающий'
+            sender_role = 'creator'
 
     if sender_role:
+        # Отправляем сообщение всем в комнате, включая отправителя
         emit('chat_message', {
-            'sender': sender_role,
+            'sender': session_id,  # отправляем session_id для идентификации
             'message': message
         }, room=room)
         

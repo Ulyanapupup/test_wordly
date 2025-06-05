@@ -237,7 +237,6 @@
   </div>
 
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-  <!-- В скриптовой части creator.html заменяем весь JavaScript код на: -->
 	<script>
 		const messagesDiv = document.getElementById("messages");
 		const chatInput = document.getElementById("chat-input");
@@ -264,18 +263,18 @@
 		  room: room,
 		  session_id: sessionId
 		});
-
-		// Инициализация чата
+		
 		function sendMessage() {
 			const msg = chatInput.value.trim();
 			if (!msg) return;
-
-			socket.on("chat_message", function (data) {
-			  if (data.sender === sessionId) {
-				addMessage("Вы", data.message);
-			  } else {
-				addMessage("Соперник", data.message);
-			  }
+			
+			// Добавляем свое сообщение сразу в чат
+			addMessage("Вы", msg);
+			
+			socket.emit("chat_message", {
+				room: room,
+				session_id: sessionId,
+				message: msg
 			});
 
 			if (role === 'creator' && secret !== null) {
@@ -291,23 +290,23 @@
 		}
 
 		function addMessage(sender, text) {
-		  const div = document.createElement("div");
-		  div.className = sender === "Вы" ? "message user-message" : "message system-message";
-		  div.textContent = text;
-		  messagesDiv.appendChild(div);
-		  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+			const div = document.createElement("div");
+			div.className = sender === "Вы" ? "message user-message" : "message system-message";
+			div.textContent = `${sender}: ${text}`;
+			messagesDiv.appendChild(div);
+			messagesDiv.scrollTop = messagesDiv.scrollHeight;
 		}
 
 		// Обработчик входящих сообщений
 		socket.on("chat_message", function (data) {
-		  // Показываем только сообщения от других игроков
-		  if (data.sender !== sessionId) {
-			addMessage("Соперник", data.message);
-		  }
+			// Показываем только сообщения от других игроков
+			if (data.sender !== sessionId) {
+				addMessage("Соперник", data.message);
+			}
 		});
 
 		chatInput.addEventListener("keydown", function (e) {
-		  if (e.key === "Enter") sendMessage();
+			if (e.key === "Enter") sendMessage();
 		});
 	</script>
 </body>
