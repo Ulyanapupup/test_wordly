@@ -125,7 +125,7 @@ header {
     
       <header>
         <div class="logo-block">
-          <img src="image/logo.svg" alt="Логотип" class="logo-img" />
+          <img src="{{ url_for('static', filename='image/logo.svg') }}" alt="logo-img"/>
           <h1 class="site-title">Logic Duel</h1>
         </div>
         <h1 class="game-title">Угадай число</h1>

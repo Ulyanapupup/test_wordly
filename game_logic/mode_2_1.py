@@ -17,6 +17,7 @@ class Game2_1:
         self.pending_check = None
         self.last_guess = None
         
+        # Обрабатываем только разрешенные типы вопросов
         if m := re.search(r"(число\s*)?больше\s*(\d+)", msg):
             self.pending_check = {'type': '>', 'value': int(m.group(2))}
         elif m := re.search(r"(число\s*)?меньше\s*(\d+)", msg):
@@ -25,6 +26,11 @@ class Game2_1:
             self.last_guess = int(m.group(2))
         elif re.search(r"число\s*является\s*степенью\s*другого\s*числа", msg):
             self.pending_check = {'type': 'is_power'}
+        else:
+            # Для других вопросов не устанавливаем pending_check
+            return False
+            
+        return True
 
     def apply_answer(self, answer):
         answer = answer.lower()

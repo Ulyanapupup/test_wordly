@@ -265,28 +265,36 @@
     });
 
     function sendMessage() {
-      const msg = chatInput.value.trim();
-      if (!msg) return;
+		const msg = chatInput.value.trim();
+		if (!msg) return;
 
-      socket.emit("chat_message", {
-        room: room,
-        session_id: sessionId,
-        message: msg
-      });
+		// Добавляем сообщение только от себя
+		addMessage("Вы", msg);
+		
+		socket.emit("chat_message", {
+		  room: room,
+		  session_id: sessionId,
+		  message: msg
+		});
+		
+		if (role === 'creator' && secret !== null) {
+		  socket.emit("reply_logic", {
+			room: room,
+			session_id: sessionId,
+			answer: msg.toLowerCase(),
+			secret: secret
+		  });
+		}
+		
+		chatInput.value = "";
+	  }
 
-      addMessage("Вы", msg);
-      
-      if (role === 'creator' && secret !== null) {
-        socket.emit("reply_logic", {
-          room: room,
-          session_id: sessionId,
-          answer: msg.toLowerCase(),
-          secret: secret
-        });
-      }
-      
-      chatInput.value = "";
-    }
+	  // Изменяем обработчик входящих сообщений
+	  socket.on("chat_message", function (data) {
+		if (data.sender !== sessionId) {  // Показываем только сообщения от других
+		  addMessage("Соперник", data.message);
+		}
+	  });
 
     function addMessage(sender, text) {
       const div = document.createElement("div");
