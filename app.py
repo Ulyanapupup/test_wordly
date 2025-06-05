@@ -579,8 +579,6 @@ def handle_submit_wordly_evaluation(data):
                 break
 
 def generate_wordly_room_id():
-    import random
-    import string
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
 # Добавим маршрут для игры Wordly
@@ -608,6 +606,156 @@ def handle_leave_wordly_game(data):
         else:
             emit('wordly_error', {'message': 'Вы не в этой комнате'})
     
+    
+
+
+
+
+
+
+
+# В app.py добавим новый обработчик сокетов для Numbly
+@socketio.on('create_wordly_room')
+def handle_create_numbly_room(data):
+    numb_length = data.get('numbLength', 5)
+    room_id = generate_numbly_room_id()
+    rooms[room_id] = {
+        'players': [request.sid],
+        'numbs': {},
+        'guesses': [],
+        'currentTurn': 0,
+        'gameOver': False,
+        'type': 'numbly',
+        'numbLength': numb_length  # Сохраняем длину слова для комнаты
+    }
+    join_room(room_id)
+    emit('numbly_room_created', {'roomId': room_id, 'numbLength': numb_length})
+
+@socketio.on('join_numbly_room')
+@socketio.on('join_numbly_room')
+def handle_join_numbly_room(data):
+    room_id = data['roomId']
+    room = rooms.get(room_id)
+    
+    if room and len(room['players']) == 1 and room.get('type') == 'numbly':
+        room['players'].append(request.sid)
+        join_room(room_id)
+        emit('numbly_room_joined', {
+            'roomId': room_id,
+            'numbLength': room.get('numbLength', 5)  # Убедимся, что передаем длину слова
+        }, room=room_id)
+    else:
+        emit('numbly_error', {'message': 'Room is full or does not exist.'})
+
+@socketio.on('make_numbly_guess')
+def handle_make_numbly_guess(data):
+    room_id = data['roomId']
+    guess = data['guess']
+    room = rooms.get(room_id)
+
+    if room and not room['gameOver'] and room.get('type') == 'numbly':
+        if request.sid != room['players'][room['currentTurn']]:
+            emit('numbly_error', {'message': 'Не ваш ход.'})
+            return
+
+        numb_length = room.get('numbLength', 5)
+        if len(guess) != numb_length:
+            emit('numbly_error', {'message': f'Догадка должна содержать {numb_length} букв'})
+            return
+
+        opponent_id = next(pid for pid in room['players'] if pid != request.sid)
+        guessed_word = guess.lower()
+
+        if guessed_word == room['numbs'].get(opponent_id, ''):
+            room['gameOver'] = True
+            emit('numbly_game_over', {
+                'winner': request.sid,
+                'numbs': room['numbs']
+            }, room=room_id)
+            return
+
+        room['guesses'].append({
+            'player': request.sid,
+            'opponent': opponent_id,
+            'guess': guessed_word,
+            'result': None
+        })
+
+        emit('numbly_opponent_guess', {'guess': guessed_word}, to=opponent_id)
+        emit('numbly_guess_sent', room=request.sid)
+
+@socketio.on('submit_numbly_word')
+def handle_submit_numbly_word(data):
+    room_id = data['roomId']
+    numb = data['numb']
+    room = rooms.get(room_id)
+
+    if room and room.get('type') == 'numbly':
+        numb_length = room.get('numbLength', 5)
+        if len(numb) != numb_length:
+            emit('numbly_error', {'message': f'Слово должно содержать {numb_length} букв'})
+            return
+
+        room['numbs'][request.sid] = numb.lower()
+        emit('numbly_update_numbs', room['numbs'], room=room_id)
+
+        if len(room['numbs']) == 2:
+            first_player = room['players'][room['currentTurn']]
+            emit('numbly_start_game', {'firstPlayer': first_player}, room=room_id)
+            emit('numbly_next_turn', {'playerId': first_player}, room=room_id)
+            
+@socketio.on('submit_numbly_evaluation')
+def handle_submit_numbly_evaluation(data):
+    room_id = data['roomId']
+    evaluation = data['evaluation']
+    room = rooms.get(room_id)
+
+    if room and not room['gameOver'] and room.get('type') == 'numbly':
+        # Находим последнюю догадку без оценки от соперника
+        for guess_data in reversed(room['guesses']):
+            if guess_data['opponent'] == request.sid and guess_data['result'] is None:
+                guess_data['result'] = evaluation
+
+                # Только отправителю догадки
+                emit('numbly_guess_evaluated', {
+                    'guess': guess_data['guess'],
+                    'evaluation': evaluation
+                }, to=guess_data['player'])
+
+                # Передаём ход
+                room['currentTurn'] = (room['currentTurn'] + 1) % 2
+                emit('numbly_next_turn', {
+                    'playerId': room['players'][room['currentTurn']]
+                }, room=room_id)
+                break
+
+def generate_numbly_room_id():
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+
+# Добавим маршрут для игры numbly
+@app.route('/game/numbly')
+def game_numbly():
+    return render_template('game_mode_numbly.html')
+    
+# Добавим новый обработчик сокетов
+@socketio.on('leave_numbly_game')
+def handle_leave_numbly_game(data):
+    room_id = data['roomId']
+    session_id = request.sid
+    
+    if room_id in rooms and rooms[room_id].get('type') == 'numbly':
+        # Удаляем игрока из комнаты
+        if 'players' in rooms[room_id] and session_id in rooms[room_id]['players']:
+            rooms[room_id]['players'].remove(session_id)
+            
+            # Уведомляем другого игрока о выходе
+            emit('numbly_force_leave', {}, room=room_id)
+            
+            # Если комната пуста, удаляем её
+            if not rooms[room_id]['players']:
+                del rooms[room_id]
+        else:
+            emit('numbly_error', {'message': 'Вы не в этой комнате'})
 
 
 if __name__ == '__main__':
