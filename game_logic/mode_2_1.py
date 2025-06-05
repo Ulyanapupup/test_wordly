@@ -20,20 +20,24 @@ class Game2_1:
         # Обрабатываем только разрешенные типы вопросов
         if m := re.search(r"(число\s*)?больше\s*(\d+)", msg):
             self.pending_check = {'type': '>', 'value': int(m.group(2))}
+            return True
         elif m := re.search(r"(число\s*)?меньше\s*(\d+)", msg):
             self.pending_check = {'type': '<', 'value': int(m.group(2))}
+            return True
         elif m := re.search(r"(это\s*число\s*|число\s*это\s*|равно\s*)?(\d+)", msg):
             self.last_guess = int(m.group(2))
+            return True
         elif re.search(r"число\s*является\s*степенью\s*другого\s*числа", msg):
             self.pending_check = {'type': 'is_power'}
-        else:
-            # Для других вопросов не устанавливаем pending_check
-            return False
+            return True
             
-        return True
+        return False
 
     def apply_answer(self, answer):
         answer = answer.lower()
+        if not answer in ['да', 'нет']:
+            return {}
+            
         if self.pending_check:
             t = self.pending_check.get('type')
             v = self.pending_check.get('value')
