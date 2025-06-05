@@ -237,82 +237,79 @@
   </div>
 
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-  <script>
-    const messagesDiv = document.getElementById("messages");
-    const chatInput = document.getElementById("chat-input");
-    const statusP = document.getElementById("status");
+  <!-- В скриптовой части creator.html заменяем весь JavaScript код на: -->
+	<script>
+		const messagesDiv = document.getElementById("messages");
+		const chatInput = document.getElementById("chat-input");
+		const statusP = document.getElementById("status");
 
-    let secret = null;
+		let secret = null;
 
-    function confirmNumber() {
-      const num = parseInt(document.getElementById("secret-number").value);
-      if (num >= 0 && num <= 1000) {
-        secret = num;
-        statusP.textContent = `Вы загадали: ${secret}`;
-      } else {
-        alert("Введите число в диапазоне 0 до 1000");
-      }
-    }
+		function confirmNumber() {
+		  const num = parseInt(document.getElementById("secret-number").value);
+		  if (num >= 0 && num <= 1000) {
+			secret = num;
+			statusP.textContent = `Вы загадали: ${secret}`;
+		  } else {
+			alert("Введите число в диапазоне 0 до 1000");
+		  }
+		}
 
-    const socket = io();
-    const sessionId = "{{ session['session_id'] }}";
-    const room = "{{ room }}";
-    const role = "creator";
-    
-    socket.emit("join_game_room", {
-      room: room,
-      session_id: sessionId
-    });
-
-    function sendMessage() {
-		const msg = chatInput.value.trim();
-		if (!msg) return;
-
-		// Добавляем сообщение только от себя
-		addMessage("Вы", msg);
+		const socket = io();
+		const sessionId = "{{ session['session_id'] }}";
+		const room = "{{ room }}";
+		const role = "creator";
 		
-		socket.emit("chat_message", {
+		socket.emit("join_game_room", {
 		  room: room,
-		  session_id: sessionId,
-		  message: msg
+		  session_id: sessionId
 		});
-		
-		if (role === 'creator' && secret !== null) {
-		  socket.emit("reply_logic", {
+
+		function sendMessage() {
+		  const msg = chatInput.value.trim();
+		  if (!msg) return;
+
+		  // Добавляем сообщение только от себя
+		  addMessage("Вы", msg);
+		  
+		  socket.emit("chat_message", {
 			room: room,
 			session_id: sessionId,
-			answer: msg.toLowerCase(),
-			secret: secret
+			message: msg,
+			sender: sessionId  // Добавляем идентификатор отправителя
 		  });
+		  
+		  if (role === 'creator' && secret !== null) {
+			socket.emit("reply_logic", {
+			  room: room,
+			  session_id: sessionId,
+			  answer: msg.toLowerCase(),
+			  secret: secret
+			});
+		  }
+		  
+		  chatInput.value = "";
 		}
-		
-		chatInput.value = "";
-	  }
 
-	  // Изменяем обработчик входящих сообщений
-	  socket.on("chat_message", function (data) {
-		if (data.sender !== sessionId) {  // Показываем только сообщения от других
-		  addMessage("Соперник", data.message);
+		function addMessage(sender, text) {
+		  const div = document.createElement("div");
+		  div.className = sender === "Вы" ? "message user-message" : "message system-message";
+		  div.textContent = text;
+		  messagesDiv.appendChild(div);
+		  messagesDiv.scrollTop = messagesDiv.scrollHeight;
 		}
-	  });
 
-    function addMessage(sender, text) {
-      const div = document.createElement("div");
-      div.className = sender === "Вы" ? "message user-message" : "message system-message";
-      div.textContent = text;
-      messagesDiv.appendChild(div);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
+		// Обработчик входящих сообщений
+		socket.on("chat_message", function (data) {
+		  // Показываем только сообщения от других игроков
+		  if (data.sender !== sessionId) {
+			addMessage("Соперник", data.message);
+		  }
+		});
 
-    socket.on("chat_message", function (data) {
-      if (data.sender !== "Вы") {
-        addMessage(data.sender, data.message);
-      }
-    });
-
-    chatInput.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") sendMessage();
-    });
-  </script>
+		chatInput.addEventListener("keydown", function (e) {
+		  if (e.key === "Enter") sendMessage();
+		});
+	</script>
 </body>
 </html>
