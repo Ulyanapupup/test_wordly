@@ -135,8 +135,8 @@ function updateInputFields(length) {
   
   // Обновляем размеры букв в истории
   document.querySelectorAll('.guess-row .letter').forEach(letter => {
-    letter.style.width = `${40 - (wordLength - 5) * 2}px`;
-    letter.style.height = `${40 - (wordLength - 5) * 2}px`;
+    letter.style.width = `${40 - (wordLength - 5) * 3}px`;
+    letter.style.height = `${40 - (wordLength - 5) * 3}px`;
   });
 }
 
@@ -282,10 +282,10 @@ socket.on('wordly_game_over', (data) => {
   const resultStatus = document.getElementById('resultStatus');
   if (data.winner === playerId) {
     resultStatus.textContent = 'Поздравляем! Вы выиграли!';
-    resultStatus.style.color = 'green';
+    resultStatus.style.color = '#d59336';
   } else {
     resultStatus.textContent = 'К сожалению, вы проиграли.';
-    resultStatus.style.color = 'red';
+    resultStatus.style.color = '#d59336';
   }
 
   gameStatus.textContent = '';
