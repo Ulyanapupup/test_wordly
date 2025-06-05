@@ -118,9 +118,9 @@ def process_question(q):
             if not nums:
                 return "Пожалуйста, укажите число"
             x = int(nums[0])
-            if num < min_range or num > max_range:
+            if x < min_range or x > max_range:
                 return f"Число должно быть в диапазоне от {min_range} до {max_range}"
 
-            return "Да" if func(num, secret_number) else "Нет"
+            return "Да" if func(x, secret_number) else "Нет"
 
     return "Неизвестный вопрос"
