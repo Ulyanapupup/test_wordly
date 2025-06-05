@@ -13,7 +13,7 @@ let attempts = 0;
 let dictionary = [];
 
 // Загрузка словаря из words.json
-fetch('/static/wor.json')
+fetch('wor.json')
     .then(response => response.json())
     .then(data => {
         dictionary = data;
@@ -127,4 +127,7 @@ guessBtn.addEventListener('click', () => {
     } else {
         messageDiv.textContent = '';
     }
+});
+document.getElementById("restartBtn").addEventListener("click", () => {
+  location.reload();
 });

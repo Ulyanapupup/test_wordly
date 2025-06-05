@@ -105,6 +105,22 @@ submitEvaluationBtn.addEventListener('click', () => {
   gameStatus.textContent = 'Дождитесь соперника...';
 });
 
+// Функция фильтрации ввода: только русские буквы (А-Я, Ё, ё)
+function allowOnlyRussianLetters(input) {
+	input.addEventListener("input", function () {
+		this.value = this.value.replace(/[^а-яё]/gi, "").toLowerCase();
+	});
+}
+
+// Применить к нужным полям после загрузки страницы
+document.addEventListener("DOMContentLoaded", () => {
+	const guessInput = document.getElementById("guessInput");
+	const secretWord = document.getElementById("secretWord");
+	
+	if (guessInput) allowOnlyRussianLetters(guessInput);
+	if (secretWord) allowOnlyRussianLetters(secretWord);
+});
+
 function updateInputFields(length) {
   // Обновляем атрибуты полей ввода
   secretWordInput.maxLength = length;
