@@ -117,28 +117,29 @@
     const pageSpan = document.getElementById("page-number");
 
     let currentPage = 0;
-    const allNumbers = Array.from({ length: 2001 }, (_, i) => i - 1000);
+    const allNumbers = Array.from({ length: 1001 }, (_, i) => i); // 0 до 1000
     let dimmedNumbers = new Set();
 
     function renderPage() {
-      numberGrid.innerHTML = "";
-      const half = allNumbers.length / 2;
-      const start = currentPage * half;
-      const end = start + half;
-      const pageNumbers = allNumbers.slice(start, end);
+	  numberGrid.innerHTML = "";
+	  // Разбиваем на две части: 0-500 и 501-1000
+	  const pageSize = 500;
+	  const start = currentPage * pageSize;
+	  const end = Math.min(start + pageSize, allNumbers.length);
+	  const pageNumbers = allNumbers.slice(start, end);
 
-      for (const num of pageNumbers) {
-        const el = document.createElement("div");
-        el.className = "number";
-        if (dimmedNumbers.has(num)) {
-          el.classList.add("dimmed");
-        }
-        el.textContent = num;
-        numberGrid.appendChild(el);
-      }
+	  for (const num of pageNumbers) {
+		const el = document.createElement("div");
+		el.className = "number";
+		if (dimmedNumbers.has(num)) {
+		  el.classList.add("dimmed");
+		}
+		el.textContent = num;
+		numberGrid.appendChild(el);
+	  }
 
-      pageSpan.textContent = currentPage + 1;
-    }
+	  pageSpan.textContent = currentPage + 1;
+	}
 
     function nextPage() {
       if (currentPage < 1) {
