@@ -405,27 +405,25 @@
 		  room: room,
 		  session_id: sessionId
 		});
-
+		
 		function sendMessage() {
 		  const msg = chatInput.value.trim();
 		  if (!msg) return;
-
-		  // Добавляем сообщение только от себя
-		  addMessage("Вы", msg);
 		  
-		  socket.emit("chat_message", {
-			room: room,
-			session_id: sessionId,
-			message: msg,
-			sender: sessionId  // Добавляем идентификатор отправителя
-		  });
-		  
-		  if (msg.match(/больше|меньше|это число|равно|степень/i)) {
-			socket.emit("guess_logic", {
-			  room: room,
-			  session_id: sessionId,
-			  message: msg
+		  socket.on("chat_message", function (data) {
+			  if (data.sender === sessionId) {
+				addMessage("Вы", data.message);
+			  } else {
+				addMessage("Соперник", data.message);
+			  }
 			});
+
+		  if (msg.match(/больше|меньше|это число/i)) {
+				socket.emit("guess_logic", {
+					room: room,
+					session_id: sessionId,
+					message: msg
+				});
 		  }
 		  chatInput.value = "";
 		}
